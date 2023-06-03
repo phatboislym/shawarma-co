@@ -1,0 +1,104 @@
+# ignore .gitignore files
+*.gitignore*
+
+# ignore __pycache__ directories
+*__pycache__*
+*.pyc
+
+# ignore backup files
+*.bak
+*.BAK
+
+# ignore .bash files
+*.bash
+
+# ignore C executables
+*.out
+
+# ignore compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# ignore data files
+*.csv
+*.sql
+*.zip
+
+# ignore dependency directories
+node_modules/
+jspm_packages/
+
+# ignore diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ignore dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# ignore environment files
+.env 
+.venv 
+env/ 
+venv/ 
+ENV/ 
+env.bak/ 
+venv.bak/
+
+# ignore host platform files
+*.vercel
+*.log
+
+# ignore logs
+logs
+*.log
+npm-debug.log*
+.pnpm-debug.log*
+
+# ignore optional eslint cache
+.eslintcache
+
+# ignore optional npm cache directory
+.npm
+
+#ignore optional REPL history
+.node_repl_history
+
+# ignore local project files
+draft.txt
+draft.md
+
+# ignore runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ignore serverless Webpack directories
+.webpack/
+
+# ignore stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# ignore swap files
+*.swp
+*~
+
+# ignore test and intermediate C files
+*main*
+*.i
+*.s
+*.o
+
+# ignore typeScript cache
+*.tsbuildinfo
+
+# ignore venv files
+*.pyc
+*venv*
+*findme/*
+*myenv/*
+
+# ignore vscode files
+*.vscode*
