@@ -88,8 +88,9 @@ pids
 # ignore test and intermediate C files
 *main*
 *.i
-*.s
 *.o
+*.s
+*test*
 
 # ignore typeScript cache
 *.tsbuildinfo
