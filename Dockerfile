@@ -5,7 +5,7 @@ FROM ubuntu:22.04
 RUN apt-get update -y && apt-get upgrade -y 
 
 # Install Python and other requirements
-RUN apt-get install -y vim nano python3.10 python3-pip python3-dev build-essential libpq-dev curl git
+RUN apt-get install -y vim nano python3.10 python3-pip python3-dev build-essential libpq-dev curl git batcat
 
 # Install PostgreSQL client
 RUN apt-get install -y postgresql-client
@@ -15,7 +15,7 @@ WORKDIR /app
 
 # Copy and install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Install uvicorn
 RUN pip install uvicorn
