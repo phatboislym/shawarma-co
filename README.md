@@ -32,3 +32,5 @@ Shawarma Co is a food delivery API with an optional frontend
 [Abdulrazaq Abdulazeez](https://github.com/aycrown77)
 
 [Adewole Conde](https://github.com/phatboislym)
+
+[Victor Opara](https://github.com/viktorzee)
