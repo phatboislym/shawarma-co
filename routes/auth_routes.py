@@ -4,9 +4,15 @@ from fastapi import APIRouter
 auth_router = APIRouter()
 
 
+@auth_router.get("/auth")
+async def auth() -> dict:
+    message: dict = {"message": "base authentication endpoint"}
+    return message
+
+
 @auth_router.get("/auth/register")
 async def register() -> dict:
-    message: dict = {"message": "registraton endpoint"}
+    message: dict = {"message": "registration endpoint"}
     return message
 
 
