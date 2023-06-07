@@ -100,6 +100,7 @@ pids
 *venv*
 *findme/*
 *myenv/*
+portfolio
 
 # ignore vscode files
 *.vscode*
