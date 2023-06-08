@@ -95,7 +95,7 @@ const footer = () => {
                 <Link
                   target="_blank"
                   rel="noreferrer"
-                  to="https://medium.com/lexir"
+                  to="!#"
                 >
                   <FontAwesomeIcon icon={faMedium} color="#fff" />
                 </Link>
@@ -104,7 +104,7 @@ const footer = () => {
                 <Link
                   target="_blank"
                   rel="noreferrer"
-                  to="https://www.linkedin.com/company/lexir"
+                  to="!#"
                 >
                   <FontAwesomeIcon icon={faFacebook} color="#fff" />
                 </Link>
@@ -113,7 +113,7 @@ const footer = () => {
                 <Link
                   target="_blank"
                   rel="noreferrer"
-                  to="https://www.facebook.com/LexirOfficial"
+                  to="!#"
                 >
                   <FontAwesomeIcon icon={faInstagram} color="#fff" />
                 </Link>
@@ -122,7 +122,7 @@ const footer = () => {
                 <Link
                   target="_blank"
                   rel="noreferrer"
-                  to="https://www.instagram.com/lexirofficial"
+                  to="!#"
                 >
                   <FontAwesomeIcon icon={faLinkedin} color="#fff" />
                 </Link>
