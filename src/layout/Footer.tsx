@@ -5,23 +5,21 @@ import {
   faMedium,
   faInstagram
 } from "@fortawesome/free-brands-svg-icons";
-import logo from "../../assets/logo.svg";
 import {Link} from "react-router-dom";
 
 const footer = () => {
   return (
-    <footer className="text-center lg:text-left bg-metal-dark text-gray-600">
+    <footer className="text-center lg:text-left bg-[#A8A9AD] text-gray-600">
       {/* Destination links */}
       <section className="mx-6 py-10 text-center md:text-left">
         <div className="grid   grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Logo */}
           <div>
-            <img
-              src={logo}
-              alt="logo"
-              width={106}
-              height={24}
-            />
+                <img
+                  className="h-8 w-8"
+                  src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+                  alt="Workflow"
+                />
           </div>
 
           <div>
@@ -30,7 +28,7 @@ const footer = () => {
             </h6>
             <p className="mb-4 text-white">
               <Link to="#!" className="">
-                Lexir for Brands
+                Branch
               </Link>
             </p>
             <p className="mb-4 text-white">
@@ -73,10 +71,10 @@ const footer = () => {
 
           <div>
             <h6 className="uppercase font-semibold mb-4 flex justify-center md:justify-start">
-              Lexir Shop
+              Shawarma Shop
             </h6>
             <p className="mb-4 text-white">
-              <Link to="#!">Brands</Link>
+              <Link to="#!">Rolls</Link>
             </p>
             <p className="mb-4 text-white">
               <Link to="#!">Spirits</Link>
@@ -136,7 +134,7 @@ const footer = () => {
 
       <section className="flex justify-center items-center lg:justify-between p-6 border-t border-gray-500">
         <div className='mr-12 lg:block"'>
-          <span className="text-white">© 2022 Lexir Inc.</span>
+          <span className="text-white">© 2023 Shawarma Co.</span>
         </div>
         <div>
           <span className="mr-5 text-white">Privacy</span>
