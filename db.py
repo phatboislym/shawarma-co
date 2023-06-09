@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 from os import environ
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
+
 
 # Load the environmental variables from the .env file
 load_dotenv('./.env.development.local')
