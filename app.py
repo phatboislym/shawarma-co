@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from routes.auth_routes import auth_router
 from routes.order_routes import order_router
 from routes.user_routes import user_router
-
+from models.items import Item
 
 app = FastAPI()
 app.include_router(auth_router)
