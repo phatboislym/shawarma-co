@@ -8,10 +8,10 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 load_dotenv('./.env.development.local')
 
 # Retrieve the database connection details from environmental variables
-db_host = environ.get('DB_HOST')
-db_port = environ.get('DB_PORT')
-db_name = environ.get('DB_NAME')
-db_user = environ.get('DB_USER')
+db_host = environ.get('DB_HOST', 'localhost')
+db_port = environ.get('DB_PORT', '5432')
+db_name = environ.get('DB_NAME', 'shawarmaco')
+db_user = environ.get('DB_USER', 'portfolio')
 db_password = environ.get('DB_PASSWORD')
 
 # Construct the database URL or connection string

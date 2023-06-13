@@ -2,12 +2,10 @@
 module for SQLAlchemy model `User` for a database table named `users`
 """
 
-from ..db import Base
-from sqlalchemy import Boolean, Column, Integer, String, Text, UUID
-from sqlalchemy.ext.declarative import declarative_base
-from typing import Optional
+from db import Base
 
-Base = declarative_base()
+from sqlalchemy import Boolean, Column, Integer, String, Text, UUID
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -30,22 +28,11 @@ class User(Base):
     is_active = Column(Boolean, default=False)
     is_staff = Column(Boolean, default=False)
     name = Column(String(100), nullable=False)
+    orders = relationship('Order', back_populates='users')
     password = Column(Text, nullable=False)
     reset_token = Column(UUID, nullable=True)
     session_id = Column(UUID, nullable=True)
     username = Column(String(50), nullable=False, unique=True)
-
-    def __init__(self, email: str, name: str, password: str, username: str,
-                 reset_token: Optional[UUID] = None,
-                 session_id: Optional[UUID] = None) -> None:
-        self.email = email
-        self.password = password
-        self.is_active = False
-        self.is_staff = False
-        self.name = name
-        self.reset_token = reset_token
-        self.session_id = session_id
-        self.username = username
 
     def __repr__(self) -> str:
         """ returns a string representation of the instance """

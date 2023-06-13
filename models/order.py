@@ -2,13 +2,12 @@
 module for SQLAlchemy model `Order` for a database table named `orders`
 """
 
-from ..db import Base, Session
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
-from sqlalchemy.ext.declarative import declarative_base
+from db import Base, Session
+from sqlalchemy import (Boolean, Column, DateTime,
+                        ForeignKey, Integer, String, Text)
+from sqlalchemy.orm import relationship
+from sqlalchemy_utils import ChoiceType
 from typing import Optional
-
-
-Base = declarative_base()
 
 
 class Order(Base):
@@ -16,36 +15,35 @@ class Order(Base):
     class for SQLAlchemy model `Order`
     attributes:
         id_, primary key: Column[int]
-        status: Column[str]
+        quantity: Column[int],
+        size: Column[ChoiceType],
+        spicyness: Column[ChoiceType]
+        status: Column[ChoiceType]
         time: Column[DateTime]
+        user: relationship
         user_id: Column[int] 
-        items: Column[cheese: Column[bool],
-            quantity: Column[int],
-            size: Column[str],
-            spicyness: Column[str]]
     """
-    __tablename__ = 'users'
+    ORDER_STATUSES = (('PENDING', 'pending'), ('IN-TRANSIT', 'in-transit'),
+                      ('DELIVERED', 'delivered'), ('CANCELED', 'canceled'))
+
+    WRAP_SIZES = (('SMALL', 'small'), ('MEDIUM', 'medium'),
+                  ('LARGE', 'large'), ('EXTRA-LARGE', 'extra-large'))
+
+    SPICYNESS = (('NO-SPICE', 'no-spice'), ('MILD', 'mild'),
+                 ('ORIGINAL', 'original'),
+                 ('SPICY', 'spicy'),
+                 ('EXTRA-SPICY', 'extra-spicy'))
+
+    __tablename__ = 'orders'
 
     id_ = Column(Integer, primary_key=True)
-    email = Column(String(100), nullable=False, unique=True)
-    password = Column(Text, nullable=False)
-    is_active = Column(Boolean, default=False)
-    is_staff = Column(Boolean, default=False)
-    session_id = Column(String(250), nullable=True)
-    reset_token = Column(String(250), nullable=True)
-    username = Column(String(50), nullable=False, unique=True)
-
-    def __init__(self, email: str, password: str, username: str,
-                 reset_token: Optional[str] = None,
-                 session_id: Optional[str] = None) -> None:
-        self.email = email
-        self.password = password
-        self.is_active = False
-        self.is_staff = False
-        self.session_id = session_id
-        self.reset_token = reset_token
-        self.username = username
+    quantity = Column(Integer, nullable=False)
+    status = Column(ChoiceType(choices=ORDER_STATUSES), default='PENDING')
+    size = Column(ChoiceType(choices=WRAP_SIZES), default='MEDIUM')
+    spicyness = Column(ChoiceType(choices=SPICYNESS), default='ORIGINAL')
+    user_id = Column(Integer, ForeignKey('users.id_'))
+    user = relationship('User', back_populates='orders')
 
     def __repr__(self) -> str:
-        model: str = f'<User {self.username}>'
+        model: str = f'<Order {self.id_}>'
         return model
