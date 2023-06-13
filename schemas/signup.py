@@ -9,7 +9,7 @@ class SignUp(BaseModel):
     is_active: Optional[bool]
     is_staff: Optional[bool]
     name: Optional[str]
-    password: bytes
+    password: str
     username: str
 
     class Config:
@@ -20,7 +20,7 @@ class SignUp(BaseModel):
                 'is_active': True,
                 'is_staff': False,
                 'name': 'Antonín Panenka',
-                'password': b'$2b$12$sReTJL8O6jpJNkBs7ZAFrOAZAvDkptgVIn.gBrxcuPJyXGkWi5SKC',
+                'password': "panenka1967",
                 'username': "panenka"
             }
         }
