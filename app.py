@@ -27,5 +27,5 @@ app.include_router(user_router)
 
 @app.get("/")
 def index() -> dict:
-    message: dict = {"message": "Hello, world!"}
+    message: dict = {"message": 'Hello, world!'}
     return message
