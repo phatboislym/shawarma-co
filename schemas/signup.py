@@ -3,24 +3,25 @@ from typing import Optional
 
 
 class SignUp(BaseModel):
+    """ schema for SignUp model """
 
     id_: Optional[int]
+    username: str
     email: str
+    name: Optional[str]
     is_active: Optional[bool]
     is_staff: Optional[bool]
-    name: Optional[str]
     password: str
-    username: str
 
     class Config:
         orm_mode = True
         schema_extra = {
             'example': {
+                'username': "panenka",
                 'email': 'dinktheball@example.com',
+                'name': 'Antonín Panenka',
                 'is_active': True,
                 'is_staff': False,
-                'name': 'Antonín Panenka',
-                'password': "panenka1967",
-                'username': "panenka"
+                'password': "panenka1967"
             }
         }
