@@ -78,6 +78,9 @@ pids
 # ignore serverless Webpack directories
 .webpack/
 
+# ignore snyk cache directories
+.dccache
+
 # ignore stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
