@@ -27,7 +27,7 @@ class User(Base):
     email = Column(String(100), nullable=False, unique=True)
     is_active = Column(Boolean, default=False)
     is_staff = Column(Boolean, default=False)
-    name = Column(String(100), nullable=False)
+    name = Column(String(100), nullable=True)
     orders = relationship('Order', back_populates='user')
     password = Column(Text, nullable=False)
     reset_token = Column(UUID, nullable=True)
