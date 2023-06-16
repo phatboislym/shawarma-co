@@ -17,7 +17,13 @@ session = Session(bind=engine)
 
 
 @auth_router.get("/auth")
-async def auth() -> dict:
+async def auth(Authorize: AuthJWT = Depends()) -> dict:
+    try:
+        Authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='invalid token')
+
     message: dict = {"message": "base authentication endpoint"}
     return message
 
@@ -28,13 +34,13 @@ async def register(user: SignUp):
     db_email = session.query(User).filter(User.email == user.email).first()
     if db_email:
         return HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                             detail='User with that email already exists')
+                             detail='user with that email already exists')
 
     db_username = session.query(User).filter(
         User.username == user.username).first()
     if db_username:
         return HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                             detail='User with that username already exists')
+                             detail='user with that username already exists')
 
     new_user: User = User(email=user.email, is_active=user.is_active,
                           is_staff=user.is_staff, name=user.name,
@@ -58,11 +64,24 @@ async def login(user: Login, Authorize: AuthJWT = Depends()):
         refresh_token = Authorize.create_refresh_token(
             subject=db_user.username)
 
-        response = {'access': access_token,
-                    'refresh': refresh_token
-                    }
+        response = {'access': access_token, 'refresh': refresh_token}
 
         return jsonable_encoder(response)
 
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                         detail='invalid username or password')
+
+
+@auth_router.get("/auth/refresh")
+async def refresh(Authorize: AuthJWT = Depends()):
+    """ FastAPI endpoint for refreshing user tokens """
+
+    try:
+        Authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='provide a valid refresh token')
+    current_user_id = Authorize.get_raw_jwt()['sub']
+    access_token = Authorize.create_access_token(subject=current_user_id)
+
+    return jsonable_encoder({'access': access_token})
