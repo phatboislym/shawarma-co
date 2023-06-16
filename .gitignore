@@ -78,6 +78,9 @@ pids
 # ignore serverless Webpack directories
 .webpack/
 
+# ignore snyk cache directories
+.dccache
+
 # ignore stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
@@ -88,8 +91,9 @@ pids
 # ignore test and intermediate C files
 *main*
 *.i
-*.s
 *.o
+*.s
+*test*
 
 # ignore typeScript cache
 *.tsbuildinfo
@@ -99,6 +103,7 @@ pids
 *venv*
 *findme/*
 *myenv/*
+portfolio
 
 # ignore vscode files
 *.vscode*
