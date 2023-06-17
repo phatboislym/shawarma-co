@@ -8,7 +8,7 @@ class OrderModel(BaseModel):
     quantity: int
     status: Optional[str] = 'PENDING'
     size: Optional[str] = 'MEDIUM'
-    spicyness: Optional[str] = 'ORIGINAL'
+    spicyness: Optional[str] = 'MEDIUM'
     user_id: Optional[int]
 
     class Config:
@@ -19,7 +19,7 @@ class OrderModel(BaseModel):
                 'quantity': 5,
                 'status': 'PENDING',
                 'size': 'MEDIUM',
-                'spicyness': 'ORIGINAL',
+                'spicyness': 'MEDIUM',
                 'user_id': 2
             }
         }
