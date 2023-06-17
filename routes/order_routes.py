@@ -44,7 +44,7 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
 
     new_order: Order = Order(quantity=order.quantity, size=order.size,
                              spicyness=order.spicyness, status=order.status)
-    new_order.user_id = db_user
+    new_order.user_id = db_user.id_
 
     session.add(new_order)
     session.commit()
