@@ -2,12 +2,10 @@
 module for SQLAlchemy model `Order` for a database table named `orders`
 """
 
-from db import Base, Session
-from sqlalchemy import (Boolean, Column, DateTime,
-                        ForeignKey, Integer, String, Text)
+from db import Base
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import ChoiceType
-from typing import Optional
 
 
 class Order(Base):

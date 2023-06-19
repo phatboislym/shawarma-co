@@ -1,7 +1,6 @@
 """
 module for order routes
 """
-from starlette.status import HTTP_404_NOT_FOUND
 from db import engine, Session
 from fastapi import APIRouter, Depends, status
 from fastapi_another_jwt_auth import AuthJWT
@@ -17,21 +16,30 @@ session = Session(bind=engine)
 
 
 @order_router.get("/orders", status_code=status.HTTP_200_OK)
-async def order(Authorize: AuthJWT = Depends()) -> list:
+async def get_orders(Authorize: AuthJWT = Depends()) -> list[Order]:
+
     try:
         Authorize.jwt_required()
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='invalid token')
 
-    db_orders: list = session.query(Order).all()
-    if not db_orders:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND)
-    return db_orders
+    current_user_id = Authorize.get_raw_jwt()['sub']
+    db_user: User = session.query(User).filter(
+        User.username == current_user_id).first()
+    if db_user.is_staff:
+        db_orders: list[Order] = session.query(Order).all()
+        if not db_orders:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        return db_orders
+    else:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail='admin access required')
 
 
 @order_router.post("/orders/order", status_code=status.HTTP_201_CREATED)
-async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
+async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()) -> Order:
+
     try:
         Authorize.jwt_required()
     except Exception:
@@ -56,15 +64,59 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
     return jsonable_encoder(response)
 
 
-@order_router.get("/orders/order", status_code=status.HTTP_200_OK)
-async def get_order(Authorize: AuthJWT = Depends()):
+@order_router.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
+async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
     try:
         Authorize.jwt_required()
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='invalid token')
-    db_order = session.query(Order).filter(Order.id_ == order.id_).first()
 
+    current_user_id = Authorize.get_raw_jwt()['sub']
+    db_user: User = session.query(User).filter(
+        User.username == current_user_id).first()
+    if db_user.is_staff:
+        db_order = session.query(Order).filter(Order.id_ == order_id).first()
+        if not db_order:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail='order not found')
+        if db_order.user_id == db_user.id_:
+            return db_order
+    else:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail='admin access required')
+
+
+@order_router.put("/orders/order/update/{order_id}/",
+                  status_code=status.HTTP_202_ACCEPTED)
+async def update_order(order_id: int, order: Order,
+                       Authorize: AuthJWT = Depends()):
+    try:
+        Authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='invalid token')
+
+    current_user_id = Authorize.get_raw_jwt()['sub']
+    db_user: User = session.query(User).filter(
+        User.username == current_user_id).first()
+    db_order = session.query(Order).filter(Order.id_ == order_id).first()
     if not db_order:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND)
-    return db_order
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    order_user: bool = db_order.user_id == current_user_id
+    if db_user.is_staff or order_user:
+        if db_order.user_id == db_user.id_:
+            db_order.quantity = order.quantity
+            db_order.size = order.size
+            db_order.spicyness = order.spicyness
+            session.commit()
+        response = {"id": db_order.id,
+                    "quantity": db_order.quantity,
+                    "pizza_size": db_order.pizza_size,
+                    "order_status": db_order.order_status}
+
+        return jsonable_encoder(response)
+
+    else:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail='admin or user access required')
