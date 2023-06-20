@@ -7,8 +7,7 @@ export interface SignUpType {
     id?: string
     email: string;
     password?:string;
-    first_name: string;
-    last_name: string;
+    full_name: string;
     username: string;
 }
 
@@ -48,4 +47,16 @@ export interface UserType {
     id: string
     firstName: string
     lastName: string
+}
+
+export interface PaginationProps {
+	total: number;
+	itemsPerPage: number;
+	currentPage: number;
+	onPageChange: (item: number) => void;
+}
+
+export interface TableProps {
+	headers: { field: string; use: string; use_in_search?: boolean }[];
+	onSorting: (key: string, order: string) => void;
 }
