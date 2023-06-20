@@ -14,10 +14,28 @@ user_router = APIRouter()
 session = Session(bind=engine)
 
 
-@user_router.get("/users")
-async def users() -> dict:
-    message: dict = {"message": "Get all users"}
-    return message
+@user_router.get("/users", status_code=status.HTTP_200_OK)
+async def users(Authorize: AuthJWT = Depends()):
+    try:
+        Authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='invalid token')
+    current_user_id = Authorize.get_raw_jwt()['sub']
+    db_user: User = session.query(User).filter(
+        User.username == current_user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='user not found')
+    if db_user.is_staff:
+        db_users = session.query(User).all
+        if not db_users:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail='no users found')
+        return db_users
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='admin access required')
 
 
 @user_router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
