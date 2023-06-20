@@ -54,9 +54,13 @@ export const login = createAsyncThunk(
   }
 );
 
-export const register = createAsyncThunk('auth/register', async(values) => {
-  const userRegister = await axios.post(`/auth/register`, values);
-  return await userRegister.data; 
+export const registerUser = createAsyncThunk('auth/register', async(values: any) => {
+  try {
+    const userRegister = await axios.post(`/auth/register`, values);
+    return await userRegister.data;     
+  } catch (error: any) {
+    throw new Error(error.response.data);
+  }
 })
 
 
@@ -82,12 +86,12 @@ export const authSlice = createSlice({
           state.error = action.error.message || 'Login failed';
           state.isAuthenticated = false;
         })
-        .addCase(register.fulfilled, (state, action) => {
+        .addCase(registerUser.fulfilled, (state, action) => {
           state.user = action.payload;
           state.isAuthenticated = false;
           state.error = null;
         })
-        .addCase(register.rejected, (state, action) => {
+        .addCase(registerUser.rejected, (state, action) => {
           state.user = null;
           state.isAuthenticated = false;
           state.error = action.error.message || 'Login Failed';
