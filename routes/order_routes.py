@@ -9,6 +9,7 @@ from fastapi.exceptions import HTTPException
 from models.order import Order
 from models.user import User
 from schemas.order import OrderModel
+from typing import List
 
 
 order_router = APIRouter()
@@ -16,7 +17,7 @@ session = Session(bind=engine)
 
 
 @order_router.get("/orders", status_code=status.HTTP_200_OK)
-async def get_orders(Authorize: AuthJWT = Depends()) -> list[Order]:
+async def get_orders(Authorize: AuthJWT = Depends()):
 
     try:
         Authorize.jwt_required()
@@ -28,7 +29,7 @@ async def get_orders(Authorize: AuthJWT = Depends()) -> list[Order]:
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     if db_user.is_staff:
-        db_orders: list[Order] = session.query(Order).all()
+        db_orders = session.query(Order).all()
         if not db_orders:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return db_orders
@@ -38,7 +39,7 @@ async def get_orders(Authorize: AuthJWT = Depends()) -> list[Order]:
 
 
 @order_router.post("/orders/order", status_code=status.HTTP_201_CREATED)
-async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()) -> Order:
+async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
 
     try:
         Authorize.jwt_required()

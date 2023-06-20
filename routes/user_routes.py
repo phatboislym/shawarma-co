@@ -8,6 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
 from models.order import Order
 from models.user import User
+from typing import List
 
 
 user_router = APIRouter()
@@ -60,29 +61,29 @@ async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
     return jsonable_encoder(response)
 
 
-@user_router.get("/users/{user}/orders}", status_code=status.HTTP_200_OK)
-async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-    current_user_id = Authorize.get_raw_jwt()['sub']
-    db_user: User = session.query(User).filter(
-        User.username == current_user_id).first()
-    order_user = session.query(User).filter(User.id_ == user_id).first()
-    if not order_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    if db_user.is_staff or order_user:
-        user_orders = session.query(Order).filter(
-            Order.user_id == user_id).all()
-        if user_orders:
-            return user_orders
-        else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='admin or user access required')
+# @user_router.get("/users/{user}/orders}", status_code=status.HTTP_200_OK)
+# async def get_orders(user_id: int, Authorize: AuthJWT = Depends()) -> List[Order]:
+#     try:
+#         Authorize.jwt_required()
+#     except Exception:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+#                             detail='invalid token')
+#     current_user_id = Authorize.get_raw_jwt()['sub']
+#     db_user: User = session.query(User).filter(
+#         User.username == current_user_id).first()
+#     order_user = session.query(User).filter(User.id_ == user_id).first()
+#     if not order_user:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+#     if db_user.is_staff or order_user:
+#         user_orders = session.query(Order).filter(
+#             Order.user_id == user_id).all()
+#         if user_orders:
+#             return user_orders
+#         else:
+#             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+#     else:
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+#                             detail='admin or user access required')
 
 
 @user_router.get("/users/user/{order_id}", status_code=status.HTTP_200_OK)
