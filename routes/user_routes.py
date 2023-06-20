@@ -60,7 +60,7 @@ async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
     return jsonable_encoder(response)
 
 
-@user_router.get("/users/user/orders}", status_code=status.HTTP_200_OK)
+@user_router.get("/users/{user}/orders}", status_code=status.HTTP_200_OK)
 async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
     try:
         Authorize.jwt_required()
