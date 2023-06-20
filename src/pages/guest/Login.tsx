@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { AuthError, login } from "../../state-control/features/authSlice";
-import { useAppDispatch } from "../../state-control/store/hooks";
 import { Fragment, useEffect, useState } from "react";
 import { LoginType } from "../../types/models";
-import { useAppSelector } from "../../state-control/store/store";
+import { useAppSelector, useAppDispatch } from "../../state-control/store/hooks";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -42,7 +41,7 @@ const Login = () => {
         setFocus("email");        
     }, [setFocus]);
     
-    const handleLogin: SubmitHandler<LoginType> = async (values, e) => {
+    const handleLogin: SubmitHandler<LoginType> = async (values: any, e: any) => {
         e?.preventDefault();
         setIsProcessing(true)
         const { email, password } = values;
