@@ -38,17 +38,14 @@ const initialState: AuthState = {
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (credentials: { email: string; password: string }) => {
-    const { email, password } = credentials;
-
-    if (!email) {
-      throw new Error('Email is required.');
-    }
+  async (credentials: { username: string; password: string }) => {
 
     try {
-      const userLogin = await axios.post(`/auth/login`, {email, password});
+      const userLogin = await axios.post(`/auth/login`, credentials);
+      console.log(userLogin)
       return await userLogin.data;  
     } catch (error:any) {
+      console.log(error)
       throw new Error(error.message);
     }
   }
@@ -56,7 +53,7 @@ export const login = createAsyncThunk(
 
 export const registerUser = createAsyncThunk('auth/register', async(values: any) => {
   try {
-    const userRegister = await axios.post(`/auth/register`, values);
+    const userRegister = await axios.post(`/auth/register`, values);    
     return await userRegister.data;     
   } catch (error: any) {
     throw new Error(error.response.data);
@@ -65,7 +62,7 @@ export const registerUser = createAsyncThunk('auth/register', async(values: any)
 
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-  const userLogout = await axios.post(`/user/logout`);
+  const userLogout = await axios.post(`/auth/logout`);
   return await userLogout.data; 
 });
 
@@ -81,17 +78,19 @@ export const authSlice = createSlice({
           state.isAuthenticated = true;
         })
         .addCase(login.rejected, (state, action) => {
-          console.log(action.error.message, "rejeccted")
+          console.log(action, "rejeccted")
           state.user = null;
           state.error = action.error.message || 'Login failed';
           state.isAuthenticated = false;
         })
         .addCase(registerUser.fulfilled, (state, action) => {
+          console.log(action,  "fulfilled")
           state.user = action.payload;
           state.isAuthenticated = false;
           state.error = null;
         })
         .addCase(registerUser.rejected, (state, action) => {
+          console.log(action, "rejectied")
           state.user = null;
           state.isAuthenticated = false;
           state.error = action.error.message || 'Login Failed';

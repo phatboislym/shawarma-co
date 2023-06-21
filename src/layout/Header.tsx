@@ -1,12 +1,33 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../state-control/store/hooks';
+import { isAuthenticated } from '../state-control/features/authSlice';
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  let activeUser = useAppSelector(isAuthenticated);
+  const navigate = useNavigate();
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
+  
+
+  
+    const handleLogout = () => {
+      // Clear authentication-related data (e.g., remove token from local storage)
+      localStorage.removeItem('access_token');
+      
+      // Update application state (e.g., set isAuthenticated to false)
+      activeUser = false
+    
+      // Redirect to the login page or any other page
+      navigate('/');
+    };
+    
+
+
+
 
   return (
     <nav className="top-0 left-0 right-0 z-10 bg-gray-700">
@@ -43,8 +64,20 @@ const Header: React.FC = () => {
           <Link to="#" className="text-white hover:text-gray-300">Home</Link>
           <Link to="#" className="text-white hover:text-gray-300">About</Link>
           <Link to="#" className="text-white hover:text-gray-300">Contact</Link>
-          <Link to="/login" className="text-white hover:text-gray-300 p-3 bg-[#FAA401] mr-3 rounded-3xl w-28 text-center hover:bg-yellow-500">Login</Link>
-          <Link to="/register" className="text-white  bg-[#FAA401] rounded-3xl w-28 text-center hover:bg-yellow-500 hover:text-gray-300 p-3">Register</Link>
+          {!activeUser ? 
+            (
+              <Fragment>
+
+                <Link to="/login" className="text-white hover:text-gray-300 p-3 bg-[#FAA401] mr-3 rounded-3xl w-28 text-center hover:bg-yellow-500">Login</Link>
+                <Link to="/register" className="text-white  bg-[#FAA401] rounded-3xl w-28 text-center hover:bg-yellow-500 hover:text-gray-300 p-3">Register</Link>
+              </Fragment>
+
+            )
+            :
+            (
+              <Link to="/" onClick={handleLogout}className="text-white  bg-[#FAA401] rounded-3xl w-28 text-center hover:bg-yellow-500 hover:text-gray-300 p-3">Logout</Link>   
+            )
+          }
         </div>
         </div>
     </nav>

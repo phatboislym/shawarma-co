@@ -5,8 +5,10 @@ import { Spinner } from "./components/Spinner";
 import Footer from "./layout/Footer";
 import Header from "./layout/Header";
 import { PrivateRoute } from "./layout/PrivateRoute";
+import axios from "axios";
 
-
+axios.defaults.baseURL = 'http://127.0.0.1:8080/';
+axios.defaults.withCredentials = true;
 
 const LandingPage = lazy(() => import("./pages/guest/LandingPage"));
 const Login = lazy(() => import ("./pages/guest/Login"));

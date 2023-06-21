@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Navigate, RouteProps } from "react-router-dom";
+import { useAppSelector } from "../state-control/store/hooks";
+import { isAuthenticated } from "../state-control/features/authSlice";
 
 type PrivateRouteProps = RouteProps & {
   children: React.ReactNode;
 };
 
 export function PrivateRoute({ children }: PrivateRouteProps) {
-//   const isLoggedIn = useAppSelector(isAuthenticated)
-    const [isLoggedIn, setIsLoggedIn] = useState(true)
+  const isLoggedIn = useAppSelector(isAuthenticated)
+   
   return isLoggedIn ? (
     <div className="min-h-screen">
       <div className="flex">        

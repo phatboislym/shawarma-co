@@ -8,10 +8,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Spinner } from "../../components/Spinner";
+import Swal from "sweetalert2";
 
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email().required("email is required"),
+  username: yup.string().required('Username is required'),
   password: yup.string().required("Password is required"),
   // .min(4, "Password length should be at least 4 characters")
   // .max(12, "Password should not exceed more than 12 Characters"),
@@ -21,11 +22,12 @@ const Login = () => {
   const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [formValue ] = useState<LoginType>({
-        email: "",
+        username: "",
         password: "",
     });
     const authError = useAppSelector(AuthError);
     const [isProcessing, setIsProcessing] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
 
     const {
         register,
@@ -38,25 +40,35 @@ const Login = () => {
     });   
 
     useEffect(() => {
-        setFocus("email");        
+        setFocus("username");        
     }, [setFocus]);
     
     const handleLogin: SubmitHandler<LoginType> = async (values: any, e: any) => {
         e?.preventDefault();
         setIsProcessing(true)
-        const { email, password } = values;
+        const { username, password } = values;
         
         try {
             
-            dispatch(login({ email, password })).then((resultAction) => {
-                if (login.fulfilled.match(resultAction)) {
-                  const access_token = resultAction.payload.access_token;
-                  localStorage.setItem('access_token', access_token);
-                  // Login successful, navigate to the dashboard
-                  navigate('/dashboard');
-                }
-            });                       
-      
+          dispatch(login({ username, password })).then((resultAction) => {                
+            console.log(resultAction, "result")
+            if (login.fulfilled.match(resultAction)) {
+              if (resultAction.payload.status_code === 400){
+                setErrorMessage(resultAction.payload.detail)
+              }else {
+                Swal.fire({
+                  position: "top-end",
+                  title: "Login Successful",
+                  icon: "success",
+                  showConfirmButton: false,
+                  timer: 2000,
+                  });
+                setTimeout(() => {
+                  navigate("/dashboard");
+                }, 2000);            
+              }                                  
+            }
+          })
         } catch (error:any) {
           console.log(error.message, 'error');          
         } finally{
@@ -82,23 +94,23 @@ const Login = () => {
           {/* <!-- Right column container with form --> */}
           <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
           {authError && (
-              <p className=' text-red-600 p-4 mb-2'>{authError}</p>
+              <p className=' bg-red-600 text-white p-4 mb-2'>{authError}</p>
           )}    
             <form onSubmit={handleSubmit(handleLogin)}>
-              {/* <!-- Email input --> */}
+              {/* <!-- username input --> */}
               <div className="relative mb-6">
                 <label
                   htmlFor="exampleFormControlInput3"
                   className=""
-                  >Email address
+                  >Username
                 </label>
                 <input
                   type="text"
                   id="username"
-                  {...register("email")}
+                  {...register("username")}
                   className="border-0 mb-3 px-3 py-3 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  placeholder="Email address" />
-                  <p className="mb-3 text-red-600">{errors.email?.message}</p>
+                  placeholder="username" />
+                  <p className="mb-3 text-red-600">{errors.username?.message}</p>
               </div>
 
               {/* <!-- Password input --> */}
@@ -119,7 +131,7 @@ const Login = () => {
               </div>
 
               {/* <!-- Remember me checkbox --> */}
-              <div className="mb-6 flex items-center justify-between">
+              {/* <div className="mb-6 flex items-center justify-between">
                 <div className="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
                   <input
                     className="relative float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:border-primary checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:checked:border-primary dark:checked:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
@@ -134,12 +146,12 @@ const Login = () => {
                   </label>
                 </div>
 
-                {/* <!-- Forgot password link --> */}
+                {/* <!-- Forgot password link --> 
                 <a
                   href="#!"
                   className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
                   >Forgot password?</a>
-              </div>
+              </div> */}
 
               {/* <!-- Submit button --> */}
               <button

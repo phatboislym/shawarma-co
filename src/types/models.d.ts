@@ -1,12 +1,12 @@
 export interface LoginType {
-    email: string;
+    username: string;
     password: string;
 }
 
 export interface SignUpType {
-    id?: string
+    // id?: string
     email: string;
-    password?:string;
+    password:string;
     full_name: string;
     username: string;
 }
