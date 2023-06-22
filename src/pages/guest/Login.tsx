@@ -75,9 +75,9 @@ const Login = () => {
             setIsProcessing(false)
         }
     };
+   
   return (
     <Fragment>
-      {isSubmitting || isProcessing && <Spinner />}
       <h1 className="text-4xl md:ml-16">Login</h1>
       <section className="">
         <div className="container h-full px-3 py-24">
@@ -94,8 +94,8 @@ const Login = () => {
           {/* <!-- Right column container with form --> */}
           <div className="md:w-8/12 lg:ml-6 lg:w-5/12">
           {authError && (
-              <p className=' bg-red-600 text-white p-4 mb-2'>{authError}</p>
-          )}    
+            <p className=' bg-red-600 text-white p-4 mb-2'>{authError}</p>
+            )}    
             <form onSubmit={handleSubmit(handleLogin)}>
               {/* <!-- username input --> */}
               <div className="relative mb-6">
@@ -157,10 +157,11 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className=" bg-gray-800 text-white text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                className=" bg-gray-800 text-white text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150 disabled:bg-gray-400"
               >
-                Sign in
+                {isSubmitting ? 'Logging in...' : 'Login'}
               </button>
+             
 
               {/* <!-- Divider --> */}
               <div

@@ -11,7 +11,7 @@ import { registerUser } from "../../state-control/features/authSlice";
 
 
 const registerSchema = yup.object().shape({
-  full_name: yup.string().required("First name is required"),
+  name: yup.string().required("First name is required"),
   email: yup.string().required("Email is required"),
   password: yup
     .string()
@@ -30,18 +30,17 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false)
   const initialValue = {
     email: "",
     password: "",
-    full_name: "",    
+    name: "",    
     username: ""
   };
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setFocus,
     // reset,
   } = useForm<SignUpType>({
@@ -80,7 +79,7 @@ const Register = () => {
   }
 
   useEffect(() => {
-    setFocus("full_name");
+    setFocus("name");
   }, [setFocus]);
 
 
@@ -108,7 +107,6 @@ const Register = () => {
               {errorMessage}{" "}
             </div>
           )}
-            {isLoading && <Spinner />} 
           <form  onSubmit={handleSubmit(handleRegister)}>
             {/* <!-- Email input --> */}
             <div className="relative mb-6">
@@ -132,10 +130,10 @@ const Register = () => {
               </label>
               <input
                 type="text"
-                {...register("full_name")}
+                {...register("name")}
                 className="border-0 mb-3 px-3 py-3 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="John Doe" />
-                <p className="mb-3 text-red-600">{errors.full_name?.message}</p>
+                <p className="mb-3 text-red-600">{errors.name?.message}</p>
             </div>
             {/* <!-- Email input --> */}
             <div className="relative mb-6">
@@ -186,9 +184,10 @@ const Register = () => {
             {/* <!-- Submit button --> */}
             <button
               type="submit"
+              disabled={isSubmitting}
               className=" bg-gray-800 text-white text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
             >
-              Sign Up
+              {isSubmitting ? 'Submitting...' : 'Register'}
             </button>
 
             <p className="mt-3">Already have an account? <Link to="/login" className="text-blue-600 font-bold">Login</Link></p>
@@ -240,6 +239,8 @@ const Register = () => {
               </svg>
               Continue with Twitter
             </a> */}
+            {/* Spinner component */}
+            {isSubmitting && <Spinner />}
           </form>
         </div>
       </div>

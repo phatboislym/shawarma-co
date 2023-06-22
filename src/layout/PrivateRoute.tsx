@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Navigate, RouteProps } from "react-router-dom";
 import { useAppSelector } from "../state-control/store/hooks";
 import { isAuthenticated } from "../state-control/features/authSlice";
