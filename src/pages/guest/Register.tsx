@@ -134,21 +134,7 @@ const Register = () => {
                 className="border-0 mb-3 px-3 py-3 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="John Doe" />
                 <p className="mb-3 text-red-600">{errors.name?.message}</p>
-            </div>
-            {/* <!-- Email input --> */}
-            <div className="relative mb-6">
-              <label
-                htmlFor="exampleFormControlInput3"
-                className=""
-                >Email address
-              </label>
-              <input
-                type="text"
-                {...register("email")}
-                className="border-0 mb-3 px-3 py-3 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="mail@address.com" />
-                <p className="mb-3 text-red-600">{errors.email?.message}</p>
-            </div>
+            </div>            
             {/* <!-- User input --> */}
             <div className="relative mb-6">
               <label
