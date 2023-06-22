@@ -2,12 +2,10 @@
 module for SQLAlchemy model `Order` for a database table named `orders`
 """
 
-from db import Base, Session
-from sqlalchemy import (Boolean, Column, DateTime,
-                        ForeignKey, Integer, String, Text)
+from db import Base
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import ChoiceType
-from typing import Optional
 
 
 class Order(Base):
@@ -30,7 +28,7 @@ class Order(Base):
                   ('LARGE', 'large'), ('EXTRA-LARGE', 'extra-large'))
 
     SPICYNESS = (('NO-SPICE', 'no-spice'), ('MILD', 'mild'),
-                 ('ORIGINAL', 'original'),
+                 ('MEDIUM', 'medium'),
                  ('SPICY', 'spicy'),
                  ('EXTRA-SPICY', 'extra-spicy'))
 
@@ -40,7 +38,7 @@ class Order(Base):
     quantity = Column(Integer, nullable=False)
     status = Column(ChoiceType(choices=ORDER_STATUSES), default='PENDING')
     size = Column(ChoiceType(choices=WRAP_SIZES), default='MEDIUM')
-    spicyness = Column(ChoiceType(choices=SPICYNESS), default='ORIGINAL')
+    spicyness = Column(ChoiceType(choices=SPICYNESS), default='MEDIUM')
     user_id = Column(Integer, ForeignKey('users.id_'))
     user = relationship('User', back_populates='orders')
 
