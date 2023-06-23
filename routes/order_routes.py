@@ -101,11 +101,12 @@ async def update_order(order_id: int, order: OrderModel,
     current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
-    db_order = session.query(Order).filter(Order.id_ == order_id).first()
+    try:
+        db_order = session.query(Order).filter(Order.id_ == order_id).first()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     order_user: User = session.query(User).filter(
         User.id_ == db_order.user_id).first()
-    if not db_order:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     is_order_user: bool = db_order.user_id == order_user.id_
     if db_user.is_staff or is_order_user:
         if order.quantity:
