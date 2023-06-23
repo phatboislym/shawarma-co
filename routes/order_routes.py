@@ -18,6 +18,17 @@ session = Session(bind=engine)
 
 @order_router.get("/orders", status_code=status.HTTP_200_OK)
 async def get_orders(Authorize: AuthJWT = Depends()):
+    """
+    get all orders (admin access required)
+
+    args:
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        List[Order]: list of orders
+    """
 
     try:
         Authorize.jwt_required()
@@ -40,6 +51,19 @@ async def get_orders(Authorize: AuthJWT = Depends()):
 
 @order_router.post("/orders/order", status_code=status.HTTP_201_CREATED)
 async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
+    """
+    create a new order
+
+    args:
+
+        order (OrderModel): order details
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: created order details
+    """
 
     try:
         Authorize.jwt_required()
@@ -67,6 +91,20 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
 
 @order_router.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
 async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
+    """
+    get order by ID (admin or order owner access required)
+
+    args:
+
+        order_id (int): ID of the order
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        Order: order details
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:
@@ -92,6 +130,22 @@ async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
                   status_code=status.HTTP_202_ACCEPTED)
 async def update_order(order_id: int, order: OrderModel,
                        Authorize: AuthJWT = Depends()):
+    """
+    update an order (admin or order owner access required)
+
+    args:
+
+        order_id (int): ID of the order
+
+        order (OrderModel): updated order details
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: updated order details
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:
@@ -118,6 +172,7 @@ async def update_order(order_id: int, order: OrderModel,
         session.commit()
         response = {"id": db_order.id_, "quantity": db_order.quantity,
                     "size": db_order.size,
+                    "spicyness": db_order.spicyness,
                     "status": db_order.status}
         return jsonable_encoder(response)
     else:
@@ -129,6 +184,21 @@ async def update_order(order_id: int, order: OrderModel,
                     status_code=status.HTTP_202_ACCEPTED)
 async def update_order_status(order_id: int, order: OrderModel,
                               Authorize: AuthJWT = Depends()):
+    """
+    update the status of an order (admin access required)
+
+    args:
+
+        order_id (int): ID of the order
+
+        order (OrderModel): updated order details
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: updated order status
+    """
 
     try:
         Authorize.jwt_required()
@@ -143,6 +213,9 @@ async def update_order_status(order_id: int, order: OrderModel,
         db_order: Order = session.query(Order).filter(
             Order.id_ == order_id).first()
         if order.status:
+            db_order.quantity = db_order.quantity
+            db_size.size = db_order.size
+            db_order.spicyness = db_order.spicyness
             db_order.status = order.status
             session.commit()
             response: dict = {"status": db_order.status}
@@ -157,6 +230,19 @@ async def update_order_status(order_id: int, order: OrderModel,
 @order_router.delete("/orders/order/delete/{order_id}",
                      status_code=status.HTTP_202_ACCEPTED)
 async def delete_order(order_id: int, Authorize: AuthJWT = Depends()):
+    """
+    delete an order (admin or order owner access required)
+
+    args:
+
+        order_id (int): ID of the order
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        Order: deleted order details
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:

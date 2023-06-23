@@ -18,6 +18,18 @@ session = Session(bind=engine)
 
 @auth_router.get("/auth")
 async def auth(Authorize: AuthJWT = Depends()) -> dict:
+    """
+    base authentication endpoint
+
+    args:
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: Response message
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:
@@ -30,7 +42,18 @@ async def auth(Authorize: AuthJWT = Depends()) -> dict:
 
 @auth_router.post("/auth/register", status_code=status.HTTP_201_CREATED)
 async def register(user: SignUp):
-    """ FastAPI endpoint for user signup """
+    """
+    user registration endpoint
+
+    args:
+
+        user (SignUp): user signup details
+
+    Returns:
+
+        User: created user details
+    """
+
     db_email = session.query(User).filter(User.email == user.email).first()
     if db_email:
         return HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
@@ -54,7 +77,19 @@ async def register(user: SignUp):
 
 @auth_router.post("/auth/login", status_code=status.HTTP_200_OK)
 async def login(user: Login, Authorize: AuthJWT = Depends()):
-    """ FastAPI endpoint for user login """
+    """
+    user login endpoint
+
+    args:
+
+        user (Login): User login details
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: access and refresh tokens
+    """
 
     db_user = session.query(User).filter(
         User.username == user.username).first()
@@ -74,7 +109,17 @@ async def login(user: Login, Authorize: AuthJWT = Depends()):
 
 @auth_router.get("/auth/refresh")
 async def refresh(Authorize: AuthJWT = Depends()):
-    """ FastAPI endpoint for refreshing user tokens """
+    """
+    token refresh endpoint
+
+    args:
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: access token
+    """
 
     try:
         Authorize.jwt_required()

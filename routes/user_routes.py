@@ -17,6 +17,18 @@ session = Session(bind=engine)
 
 @user_router.get("/users", status_code=status.HTTP_200_OK)
 async def users(Authorize: AuthJWT = Depends()):
+    """
+    get all users endpoint (admin access required)
+
+    args:
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        List[User]: list of user details
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:
@@ -41,6 +53,20 @@ async def users(Authorize: AuthJWT = Depends()):
 
 @user_router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
 async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
+    """
+    get user details endpoint (admin or order owner access required)
+
+    args:
+
+        user_id (int): user ID
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        dict: user details
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:
@@ -61,33 +87,64 @@ async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
     return jsonable_encoder(response)
 
 
-# @user_router.get("/users/{user}/orders}", status_code=status.HTTP_200_OK)
-# async def get_orders(user_id: int, Authorize: AuthJWT = Depends()) -> List[Order]:
-#     try:
-#         Authorize.jwt_required()
-#     except Exception:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-#                             detail='invalid token')
-#     current_user_id = Authorize.get_raw_jwt()['sub']
-#     db_user: User = session.query(User).filter(
-#         User.username == current_user_id).first()
-#     order_user = session.query(User).filter(User.id_ == user_id).first()
-#     if not order_user:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-#     if db_user.is_staff or order_user:
-#         user_orders = session.query(Order).filter(
-#             Order.user_id == user_id).all()
-#         if user_orders:
-#             return user_orders
-#         else:
-#             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-#     else:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-#                             detail='admin or user access required')
+@user_router.get("/users/{user}/orders}", status_code=status.HTTP_200_OK)
+async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
+    """
+    get orders for a user endpoint (admin or order owner access required)
+
+    args:
+
+        user_id (int): user ID
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        List[Order]: list of user orders
+    """
+
+    try:
+        Authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='invalid token')
+    current_user_id = Authorize.get_raw_jwt()['sub']
+    db_user: User = session.query(User).filter(
+        User.username == current_user_id).first()
+    try:
+        order_user = session.query(User).filter(User.id_ == user_id).first()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='user not found')
+    if not order_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if db_user.is_staff or order_user:
+        user_orders = session.query(Order).filter(
+            Order.user_id == user_id).all()
+        if user_orders:
+            return user_orders
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='admin or user access required')
 
 
 @user_router.get("/users/user/{order_id}", status_code=status.HTTP_200_OK)
 async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
+    """
+    get order details endpoint (admin or order owner access required)
+
+    args:
+        order_id (int): order ID
+
+        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+    Returns:
+
+        Order: order details
+    """
+
     try:
         Authorize.jwt_required()
     except Exception:
