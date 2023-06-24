@@ -262,7 +262,8 @@ async def delete_order(order_id: int, Authorize: AuthJWT = Depends()):
     if db_user.is_staff or is_order_user:
         session.delete(db_order)
         session.commit()
-        return db_order
+        response: str = f'order {order_id} deleted'
+        return response
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail='admin or user access required')

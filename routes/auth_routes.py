@@ -72,7 +72,8 @@ async def register(user: SignUp):
 
     session.add(new_user)
     session.commit()
-    return new_user
+    response: str = f'user {new_user.username} created'
+    return response
 
 
 @auth_router.post("/auth/login", status_code=status.HTTP_200_OK)
