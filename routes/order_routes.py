@@ -42,7 +42,7 @@ async def get_orders(Authorize: AuthJWT = Depends()):
     if db_user.is_staff:
         db_orders = session.query(Order).all()
         if not db_orders:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            return []
         return db_orders
     else:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
@@ -127,7 +127,7 @@ async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
                             detail='admin access required')
 
 
-@order_router.put("/orders/order/update/{order_id}/",
+@order_router.put("/orders/{order_id}/update/",
                   status_code=status.HTTP_202_ACCEPTED)
 async def update_order(order_id: int, order: OrderModel,
                        Authorize: AuthJWT = Depends()):
@@ -181,7 +181,7 @@ async def update_order(order_id: int, order: OrderModel,
                             detail='admin or user access required')
 
 
-@order_router.patch("/orders/order/update/{order_id}/",
+@order_router.patch("/orders/{order_id}/update/",
                     status_code=status.HTTP_202_ACCEPTED)
 async def update_order_status(order_id: int, order: OrderModel,
                               Authorize: AuthJWT = Depends()):
@@ -228,7 +228,7 @@ async def update_order_status(order_id: int, order: OrderModel,
                             detail='admin access required')
 
 
-@order_router.delete("/orders/order/delete/{order_id}",
+@order_router.delete("/orders/{order_id}/delete/",
                      status_code=status.HTTP_202_ACCEPTED)
 async def delete_order(order_id: int, Authorize: AuthJWT = Depends()):
     """
