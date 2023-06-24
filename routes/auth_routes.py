@@ -122,11 +122,10 @@ async def refresh(Authorize: AuthJWT = Depends()):
     """
 
     try:
-        Authorize.jwt_required()
+        Authorize.jwt_refresh_token_required()
+        current_user_id = Authorize.get_raw_jwt()['sub']
+        access_token = Authorize.create_access_token(subject=current_user_id)
+        return jsonable_encoder({'access': access_token})
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='provide a valid refresh token')
-    current_user_id = Authorize.get_raw_jwt()['sub']
-    access_token = Authorize.create_access_token(subject=current_user_id)
-
-    return jsonable_encoder({'access': access_token})
