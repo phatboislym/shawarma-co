@@ -75,8 +75,9 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
     db_user = session.query(User).filter(
         User.username == current_user_id).first()
 
-    new_order: Order = Order(quantity=order.quantity, size=order.size,
-                             spicyness=order.spicyness, status=order.status)
+    new_order: Order = Order(quantity=order.quantity, size=order.size.upper(),
+                             spicyness=order.spicyness.upper(),
+                             status=order.status.upper())
     new_order.user_id = db_user.id_
 
     session.add(new_order)
@@ -216,7 +217,7 @@ async def update_order_status(order_id: int, order: OrderModel,
             db_order.quantity = db_order.quantity
             db_size.size = db_order.size
             db_order.spicyness = db_order.spicyness
-            db_order.status = order.status
+            db_order.status = order.status.upper()
             session.commit()
             response: dict = {"status": db_order.status}
             return jsonable_encoder(response)
