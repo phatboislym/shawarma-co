@@ -13,17 +13,20 @@ Shawarma Co is a food delivery API with an optional frontend
 ## ROUTES
 
 | Method | Route | Purpose |Access|
-| ------- | ----- | ------------- | ------------- |
-| *POST* | ```/auth/signup/``` | *Register new user*| *All users*|
+| ------- | :----- | :-------------: | ------------- |
+| *POST* | ```/auth/register/``` | *Register new user*| *All users*|
 | *POST* | ```/auth/login/``` | *Login user*|*All users*|
-| *POST* | ```/orders/order/``` | *Place an order*|*All users*|
-| *PUT* | ```/orders/order/update/{order_id}/``` | *Update an order*|*All users*|
-| *PATCH* | ```/orders/order/status/{order_id}/``` | *Update order status*|*Superuser*|
-| *DELETE* | ```/orders/order/delete/{order_id}/``` | *Delete/Remove an order* |*All users*|
-| *GET* | ```/users/{user}/orders/``` | *Get user's orders*|*All users*|
-| *GET* | ```/orders/orders/``` | *List all orders made*|*Superuser*|
+| *GET* | ```/auth/refresh/``` | *Refresh access token*|*All users*|
+| *GET* | ```/orders/``` | *List all orders made*|*Superuser*|
+| *POST* | ```/orders/order``` | *Place an order*|*All users*|
+| *PUT* | ```/orders/{order_id}/update/``` | *Update an order*|*All users*|
 | *GET* | ```/orders/{order_id}/``` | *Retrieve an order*|*Superuser*|
-| *GET* | ```/orders/user/order/{order_id}/``` | *Get specific user's order*| *Superuser*
+| *PATCH* | ```/orders/{order_id}/status/``` | *Update order status*|*Superuser*|
+| *DELETE* | ```/orders/{order_id}/delete/``` | *Delete an order* |*All users*|
+| *GET* | ```/users/``` | *Get all users* |*Superuser*|
+| *GET* | ```/users/{user_id}/``` | *Get a specific user* |*Superuser*|
+| *GET* | ```/users/{user_id}/orders/``` | *Get user's orders*|*All users*|
+| *GET* | ```/users/user/{order_id}/``` | *Get specific user's order*| *Superuser*
 | *GET* | ```/docs/``` | *View API documentation*|*All users*|
 
 ## Authors
