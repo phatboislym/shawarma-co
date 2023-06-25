@@ -1,16 +1,18 @@
 """
 module for auth routes
 """
-from db import engine, Session
+from datetime import datetime
 from fastapi import APIRouter, Depends, status
 from fastapi_another_jwt_auth import AuthJWT
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
+from werkzeug.security import check_password_hash, generate_password_hash
+
+
+from db import engine, Session
 from models.user import User
 from schemas.signup import SignUp
 from schemas.login import Login
-from werkzeug.security import check_password_hash, generate_password_hash
-
 
 auth_router = APIRouter()
 session = Session(bind=engine)
@@ -68,10 +70,18 @@ async def register(user: SignUp):
     new_user: User = User(email=user.email, is_active=user.is_active,
                           is_staff=user.is_staff, name=user.name,
                           password=generate_password_hash(user.password),
-                          username=user.username)
+                          username=user.username,
+                          created_at=datetime.utcnow(),
+                          updated_at=datetime.utcnow())
 
-    session.add(new_user)
-    session.commit()
+    try:
+        session.add(new_user)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail='failed to create order')
+
     response: str = f'user {new_user.username} created'
     return response
 

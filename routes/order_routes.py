@@ -1,15 +1,19 @@
 """
 module for order routes
 """
-from db import engine, Session
+from datetime import datetime
 from fastapi import APIRouter, Depends, status
 from fastapi_another_jwt_auth import AuthJWT
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
+from sqlalchemy.orm import Session
+from uuid import UUID
+
+
+from db import engine, Session
 from models.order import Order
 from models.user import User
 from schemas.order import OrderModel
-from typing import List
 
 
 order_router = APIRouter()
@@ -76,28 +80,37 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
         User.username == current_user_id).first()
 
     new_order: Order = Order(quantity=order.quantity, size=order.size.upper(),
-                             spicyness=order.spicyness.upper(),
-                             status=order.status.upper())
+                             spiciness=order.spiciness.upper(),
+                             status=order.status.upper(),
+                             created_at=datetime.utcnow(),
+                             updated_at=datetime.utcnow())
     new_order.user_id = db_user.id_
 
-    session.add(new_order)
-    session.commit()
+    try:
+        session.add(new_order)
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail='failed to create order')
 
     response: dict = {'id': new_order.id_, 'size': new_order.size,
                       'quantity': new_order.quantity,
-                      'spicyness': new_order.spicyness,
-                      'status': new_order.status}
+                      'spiciness': new_order.spiciness,
+                      'status': new_order.status,
+                      'created_at': new_order.created_at,
+                      'updated_at': new_order.updated_at}
     return jsonable_encoder(response)
 
 
-@order_router.get("/orders/{order_id}", status_code=status.HTTP_200_OK)
-async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
+@order_router.get("/orders/{order_id}", status_code=status.HTTP_201_CREATED)
+async def get_order(order_id: UUID, Authorize: AuthJWT = Depends()):
     """
     get order by ID (admin or order owner access required)
 
     args:
 
-        order_id (int): ID of the order
+        order_id (UUID): ID of the order
 
         Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
 
@@ -129,14 +142,14 @@ async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
 
 @order_router.put("/orders/{order_id}/update/",
                   status_code=status.HTTP_202_ACCEPTED)
-async def update_order(order_id: int, order: OrderModel,
+async def update_order(order_id: UUID, order: OrderModel,
                        Authorize: AuthJWT = Depends()):
     """
     update an order (admin or order owner access required)
 
     args:
 
-        order_id (int): ID of the order
+        order_id (UUID): ID of the order
 
         order (OrderModel): updated order details
 
@@ -168,12 +181,19 @@ async def update_order(order_id: int, order: OrderModel,
             db_order.quantity = order.quantity
         if order.size:
             db_order.size = order.size.upper()
-        if order.spicyness:
-            db_order.spicyness = order.spicyness.upper()
-        session.commit()
+        if order.spiciness:
+            db_order.spiciness = order.spiciness.upper()
+        db_order.updated_at = datetime.utcnow()
+
+        try:
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail='failed to update order')
         response = {"id": db_order.id_, "quantity": db_order.quantity,
                     "size": db_order.size,
-                    "spicyness": db_order.spicyness,
+                    "spiciness": db_order.spiciness,
                     "status": db_order.status}
         return jsonable_encoder(response)
     else:
@@ -183,14 +203,14 @@ async def update_order(order_id: int, order: OrderModel,
 
 @order_router.patch("/orders/{order_id}/update/",
                     status_code=status.HTTP_202_ACCEPTED)
-async def update_order_status(order_id: int, order: OrderModel,
+async def update_order_status(order_id: UUID, order: OrderModel,
                               Authorize: AuthJWT = Depends()):
     """
     update the status of an order (admin access required)
 
     args:
 
-        order_id (int): ID of the order
+        order_id (UUID): ID of the order
 
         order (OrderModel): updated order details
 
@@ -216,7 +236,7 @@ async def update_order_status(order_id: int, order: OrderModel,
         if order.status:
             db_order.quantity = db_order.quantity
             db_size.size = db_order.size
-            db_order.spicyness = db_order.spicyness
+            db_order.spiciness = db_order.spiciness
             db_order.status = order.status.upper()
             session.commit()
             response: dict = {"status": db_order.status}
@@ -230,13 +250,13 @@ async def update_order_status(order_id: int, order: OrderModel,
 
 @order_router.delete("/orders/{order_id}/delete/",
                      status_code=status.HTTP_202_ACCEPTED)
-async def delete_order(order_id: int, Authorize: AuthJWT = Depends()):
+async def delete_order(order_id: UUID, Authorize: AuthJWT = Depends()):
     """
     delete an order (admin or order owner access required)
 
     args:
 
-        order_id (int): ID of the order
+        order_id (UUID): ID of the order
         Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
 
     Returns:
@@ -260,8 +280,13 @@ async def delete_order(order_id: int, Authorize: AuthJWT = Depends()):
         User.username == current_user_id).first()
     is_order_user: bool = db_user.id_ == order_user.id_
     if db_user.is_staff or is_order_user:
-        session.delete(db_order)
-        session.commit()
+        try:
+            session.delete(db_order)
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail='failed to delete order')
         response: str = f'order {order_id} deleted'
         return response
     else:

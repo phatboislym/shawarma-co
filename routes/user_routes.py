@@ -1,14 +1,16 @@
 """
 module for user routes
 """
-from db import engine, Session
 from fastapi import APIRouter, Depends, status
 from fastapi_another_jwt_auth import AuthJWT
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
+from uuid import UUID
+
+
+from db import engine, Session
 from models.order import Order
 from models.user import User
-from typing import List
 
 
 user_router = APIRouter()
@@ -52,13 +54,13 @@ async def users(Authorize: AuthJWT = Depends()):
 
 
 @user_router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
-async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
+async def get_user(user_id: UUID, Authorize: AuthJWT = Depends()) -> dict:
     """
     get user details endpoint (admin or order owner access required)
 
     args:
 
-        user_id (int): user ID
+        user_id (UUID): user ID
 
         Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
 
@@ -87,14 +89,14 @@ async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
     return jsonable_encoder(response)
 
 
-@user_router.get("/users/orders/{user_id}/}", status_code=status.HTTP_200_OK)
-async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
+@user_router.get("/users/{user_id}/orders/}", status_code=status.HTTP_200_OK)
+async def get_orders(user_id: UUID, Authorize: AuthJWT = Depends()):
     """
     get orders for a user endpoint (admin or order owner access required)
 
     args:
 
-        user_id (int): user ID
+        user_id (UUID): user ID
 
         Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
 
@@ -117,7 +119,8 @@ async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='user not found')
     if not order_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='kasala don burst')
     if db_user.is_staff or order_user:
         user_orders = order_user.orders
         if user_orders:
@@ -130,12 +133,12 @@ async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
 
 
 @user_router.get("/users/user/{order_id}", status_code=status.HTTP_200_OK)
-async def get_order(order_id: int, Authorize: AuthJWT = Depends()):
+async def get_order(order_id: UUID, Authorize: AuthJWT = Depends()):
     """
     get order details endpoint (admin or order owner access required)
 
     args:
-        order_id (int): order ID
+        order_id (UUID): order ID
 
         Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
 
