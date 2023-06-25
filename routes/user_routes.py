@@ -87,7 +87,7 @@ async def get_user(user_id: int, Authorize: AuthJWT = Depends()) -> dict:
     return jsonable_encoder(response)
 
 
-@user_router.get("/users/{user_id}/orders}", status_code=status.HTTP_200_OK)
+@user_router.get("/users/orders/{user_id}/}", status_code=status.HTTP_200_OK)
 async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
     """
     get orders for a user endpoint (admin or order owner access required)
@@ -119,12 +119,11 @@ async def get_orders(user_id: int, Authorize: AuthJWT = Depends()):
     if not order_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     if db_user.is_staff or order_user:
-        user_orders = session.query(Order).filter(
-            Order.user_id == user_id).all()
+        user_orders = order_user.orders
         if user_orders:
             return user_orders
         else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            return []
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='admin or user access required')
