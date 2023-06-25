@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from os import environ
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy_utils import UUIDType
 
 
 # Load the environmental variables from the .env file
