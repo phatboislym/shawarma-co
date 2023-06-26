@@ -11,6 +11,7 @@ from uuid import UUID
 from db import engine, Session
 from models.order import Order
 from models.user import User
+from routes.auth_routes import check_token
 
 
 user_router = APIRouter()
@@ -18,32 +19,26 @@ session = Session(bind=engine)
 
 
 @user_router.get("/users", status_code=status.HTTP_200_OK)
-async def users(Authorize: AuthJWT = Depends()):
+async def users(current_user_id: str = Depends(check_token)):
     """
     get all users endpoint (admin access required)
 
     args:
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         List[User]: list of user details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='user not found')
     if db_user.is_staff:
-        db_users = session.query(User).all
+        db_users = session.query(User).all()
         if not db_users:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail='no users found')
@@ -54,7 +49,8 @@ async def users(Authorize: AuthJWT = Depends()):
 
 
 @user_router.get("/users/{user_id}", status_code=status.HTTP_200_OK)
-async def get_user(user_id: UUID, Authorize: AuthJWT = Depends()) -> dict:
+async def get_user(user_id: UUID,
+                   current_user_id: str = Depends(check_token)):
     """
     get user details endpoint (admin or order owner access required)
 
@@ -62,20 +58,14 @@ async def get_user(user_id: UUID, Authorize: AuthJWT = Depends()) -> dict:
 
         user_id (UUID): user ID
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         dict: user details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
     db_user: User = session.query(User).filter(User.id_ == user_id).first()
-    current_user_id = Authorize.get_raw_jwt()['sub']
     current_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     admin: bool = current_user.is_staff
@@ -89,8 +79,9 @@ async def get_user(user_id: UUID, Authorize: AuthJWT = Depends()) -> dict:
     return jsonable_encoder(response)
 
 
-@user_router.get("/users/{user_id}/orders/}", status_code=status.HTTP_200_OK)
-async def get_orders(user_id: UUID, Authorize: AuthJWT = Depends()):
+@user_router.get("/users/{user_id}/orders/", status_code=status.HTTP_200_OK)
+async def get_orders(user_id: UUID,
+                     current_user_id: str = Depends(check_token)):
     """
     get orders for a user endpoint (admin or order owner access required)
 
@@ -98,19 +89,13 @@ async def get_orders(user_id: UUID, Authorize: AuthJWT = Depends()):
 
         user_id (UUID): user ID
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         List[Order]: list of user orders
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     try:
@@ -120,7 +105,7 @@ async def get_orders(user_id: UUID, Authorize: AuthJWT = Depends()):
                             detail='user not found')
     if not order_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail='kasala don burst')
+                            detail='admin or user access required')
     if db_user.is_staff or order_user:
         user_orders = order_user.orders
         if user_orders:
@@ -133,33 +118,31 @@ async def get_orders(user_id: UUID, Authorize: AuthJWT = Depends()):
 
 
 @user_router.get("/users/user/{order_id}", status_code=status.HTTP_200_OK)
-async def get_order(order_id: UUID, Authorize: AuthJWT = Depends()):
+async def get_order(order_id: UUID,
+                    current_user_id: str = Depends(check_token)):
     """
     get order details endpoint (admin or order owner access required)
 
     args:
         order_id (UUID): order ID
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         Order: order details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
-    db_order = session.query(Order).filter(Order.id_ == order_id).first()
-    if not db_order:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    if db_user.id_ == db_order.user_id:
+    try:
+        db_order: Order = session.query(Order).filter(
+            Order.id_ == order_id).first()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='order not found')
+    if db_user.is_staff or db_user.id_ == db_order.user_id:
         return db_order
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='user access required')
+                            detail='admin or user access required')

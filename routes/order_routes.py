@@ -13,6 +13,7 @@ from uuid import UUID
 from db import engine, Session
 from models.order import Order
 from models.user import User
+from routes.auth_routes import check_token
 from schemas.order import OrderModel
 
 
@@ -21,26 +22,19 @@ session = Session(bind=engine)
 
 
 @order_router.get("/orders", status_code=status.HTTP_200_OK)
-async def get_orders(Authorize: AuthJWT = Depends()):
+async def get_orders(current_user_id: str = Depends(check_token)):
     """
     get all orders (admin access required)
 
     args:
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         List[Order]: list of orders
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     if db_user.is_staff:
@@ -54,7 +48,8 @@ async def get_orders(Authorize: AuthJWT = Depends()):
 
 
 @order_router.post("/orders/order", status_code=status.HTTP_201_CREATED)
-async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
+async def create_order(order: OrderModel,
+                       current_user_id: str = Depends(check_token)):
     """
     create a new order
 
@@ -62,20 +57,13 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
 
         order (OrderModel): order details
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         dict: created order details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user = session.query(User).filter(
         User.username == current_user_id).first()
 
@@ -103,8 +91,9 @@ async def create_order(order: OrderModel, Authorize: AuthJWT = Depends()):
     return jsonable_encoder(response)
 
 
-@order_router.get("/orders/{order_id}", status_code=status.HTTP_201_CREATED)
-async def get_order(order_id: UUID, Authorize: AuthJWT = Depends()):
+@ order_router.get("/orders/{order_id}", status_code=status.HTTP_201_CREATED)
+async def get_order(order_id: UUID,
+                    current_user_id: str = Depends(check_token)):
     """
     get order by ID (admin or order owner access required)
 
@@ -112,20 +101,13 @@ async def get_order(order_id: UUID, Authorize: AuthJWT = Depends()):
 
         order_id (UUID): ID of the order
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         Order: order details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     if db_user.is_staff:
@@ -140,10 +122,10 @@ async def get_order(order_id: UUID, Authorize: AuthJWT = Depends()):
                             detail='admin access required')
 
 
-@order_router.put("/orders/{order_id}/update/",
-                  status_code=status.HTTP_202_ACCEPTED)
+@ order_router.put("/orders/{order_id}/update/",
+                   status_code=status.HTTP_202_ACCEPTED)
 async def update_order(order_id: UUID, order: OrderModel,
-                       Authorize: AuthJWT = Depends()):
+                       current_user_id: str = Depends(check_token)):
     """
     update an order (admin or order owner access required)
 
@@ -153,20 +135,13 @@ async def update_order(order_id: UUID, order: OrderModel,
 
         order (OrderModel): updated order details
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         dict: updated order details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     try:
@@ -201,10 +176,10 @@ async def update_order(order_id: UUID, order: OrderModel,
                             detail='admin or user access required')
 
 
-@order_router.patch("/orders/{order_id}/update/",
-                    status_code=status.HTTP_202_ACCEPTED)
+@ order_router.patch("/orders/{order_id}/update/",
+                     status_code=status.HTTP_202_ACCEPTED)
 async def update_order_status(order_id: UUID, order: OrderModel,
-                              Authorize: AuthJWT = Depends()):
+                              current_user_id: str = Depends(check_token)):
     """
     update the status of an order (admin access required)
 
@@ -214,20 +189,13 @@ async def update_order_status(order_id: UUID, order: OrderModel,
 
         order (OrderModel): updated order details
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         dict: updated order status
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
-
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     if db_user.is_staff:
@@ -248,32 +216,28 @@ async def update_order_status(order_id: UUID, order: OrderModel,
                             detail='admin access required')
 
 
-@order_router.delete("/orders/{order_id}/delete/",
-                     status_code=status.HTTP_202_ACCEPTED)
-async def delete_order(order_id: UUID, Authorize: AuthJWT = Depends()):
+@ order_router.delete("/orders/{order_id}/delete/",
+                      status_code=status.HTTP_202_ACCEPTED)
+async def delete_order(order_id: UUID,
+                       current_user_id: str = Depends(check_token)):
     """
     delete an order (admin or order owner access required)
 
     args:
 
         order_id (UUID): ID of the order
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+
+        current_user_id: str (from AuthJWT instance)
 
     Returns:
 
         Order: deleted order details
     """
 
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
     db_order: Order = session.query(Order).filter(
         Order.id_ == order_id).first()
     if not db_order:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    current_user_id = Authorize.get_raw_jwt()['sub']
     db_user: User = session.query(User).filter(
         User.username == current_user_id).first()
     order_user: User = session.query(User).filter(

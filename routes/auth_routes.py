@@ -18,25 +18,29 @@ auth_router = APIRouter()
 session = Session(bind=engine)
 
 
+def check_token(Authorize: AuthJWT = Depends()):
+    try:
+        Authorize.jwt_required()
+        current_user_id = Authorize.get_raw_jwt()['sub']
+        return current_user_id
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail='invalid token')
+
+
 @auth_router.get("/auth")
-async def auth(Authorize: AuthJWT = Depends()) -> dict:
+async def auth(Authorize: AuthJWT = Depends(check_token)) -> dict:
     """
     base authentication endpoint
 
     args:
 
-        Authorize (AuthJWT, optional): AuthJWT instance. defaults to Depends()
+        Authorize (AuthJWT, optional): AuthJWT instance
 
     Returns:
 
         dict: Response message
     """
-
-    try:
-        Authorize.jwt_required()
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail='invalid token')
 
     message: dict = {"message": "base authentication endpoint"}
     return message
