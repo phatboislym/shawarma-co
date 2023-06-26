@@ -235,7 +235,7 @@ async def update_order_status(order_id: UUID, order: OrderModel,
             Order.id_ == order_id).first()
         if order.status:
             db_order.quantity = db_order.quantity
-            db_size.size = db_order.size
+            db_order.size = db_order.size
             db_order.spiciness = db_order.spiciness
             db_order.status = order.status.upper()
             session.commit()
