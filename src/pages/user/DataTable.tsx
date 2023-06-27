@@ -5,9 +5,8 @@ import EditOrderModal from '../orders/modals/EditOrderModal';
 import ViewOrderModal from '../orders/modals/ViewOrderModal';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { deleteOrder, fetchAllOrders, fetchOrderById } from '../../state-control/features/OrderSlice';
+import { deleteOrder, fetchAllOrders, fetchOrderById } from '../../state-control/features/orderSlice';
 import { useAppDispatch } from '../../state-control/store/hooks';
-import { useDeleteOrderMutation } from '../../state-control/api/orderApi';
 
 const useStyles = makeStyles({
   table: {

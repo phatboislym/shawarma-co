@@ -10,13 +10,13 @@ const BASE_URL = import.meta.env.VITE_API_SERVER_ENDPOINT as string;
 
 export const orderApi = createApi({
   reducerPath: "bookApi",
-  baseQuery: axiosBaseQuery({ baseUrl: `${BASE_URL}/api/book/` }),
+  baseQuery: axiosBaseQuery({ baseUrl: `${BASE_URL}/orders/` }),
   tagTypes: ["Orders"],
   endpoints: (builder) => ({
     storeOrder: builder.mutation<OrderType,  Record<string, unknown>>({
       query: (data) => {
         return {
-          url: `create`,
+          url: `order`,
           method: "post",
           credentials: "include",
           data,
@@ -24,10 +24,9 @@ export const orderApi = createApi({
       },
     }),
     updateOrder: builder.mutation<OrderType, Record<any, any>>({
-      query: (data) => {
-        console.log(data, "data")
+      query: (data) => {        
         return {
-          url: `${data.id}`,
+          url: `order/update${data.id_}`,
           method: "patch",
           data,
         };
@@ -35,15 +34,13 @@ export const orderApi = createApi({
     }),
     getAllOrders: builder.query<OrderResponse, void>({
       query: () => ({
-        url: "lists",
-        method: "GET",
+        url: "",        
       }),
       providesTags: ["Orders"],
     }),
     getOrder: builder.query<OrderType, string>({
-      query: (id: string) => ({
-        url: `${id}`,
-        method: "GET",
+      query: (id: string) => ({ 
+        url: `${id}`
       }),
     }),
     deleteOrder: builder.mutation<{ success: boolean; id: string }, string>({

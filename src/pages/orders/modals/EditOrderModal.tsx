@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Modal from '../../../components/Modal';
 import { IoClose } from "react-icons/io5";
 import * as yup from 'yup';
@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import 'react-datepicker/dist/react-datepicker.css';
 import { OrderType } from '../../../types/models';
 import { useAppSelector, useAppDispatch } from '../../../state-control/store/hooks';
-import { fetchAllOrders, selectOrderRecord, updateOrder } from '../../../state-control/features/OrderSlice';
+import { fetchAllOrders, selectOrderRecord, updateOrder } from '../../../state-control/features/orderSlice';
 
 
 type ModalProps = {
