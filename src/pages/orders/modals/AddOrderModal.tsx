@@ -5,12 +5,13 @@ import { IoClose } from "react-icons/io5";
 import * as yup from 'yup';
 import { Spinner } from '../../../components/Spinner';
 import Swal from "sweetalert2";
-import { useStoreOrderMutation } from '../../../state-control/api/orderApi';
 import { OrderType } from '../../../types/models';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { createOrder, fetchAllOrders } from '../../../state-control/features/orderSlice';
+import { useAppDispatch } from '../../../state-control/store/hooks';
 
 
 
@@ -25,8 +26,7 @@ const addOrderSchema = yup.object().shape({
 
 const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
   const [errorMessage, setErrorMessage] = useState("");
-  const [addOrder, { isLoading, isSuccess }] = useStoreOrderMutation();
-
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -37,19 +37,6 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
   });
 
   useEffect(() => {
-    if (isSuccess) {
-      Swal.fire({
-        position: "top-end",
-        title: "Order Created Successfully",
-        icon: "success",
-        showConfirmButton: false,
-        timer: 2000
-      });
-      setModalOpen(false);
-    }
-  }, [isSuccess, setModalOpen]);
-
-  useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
     }
@@ -58,10 +45,34 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
   const onSubmitHandler: SubmitHandler<OrderType> = async (values, e) => {
     e?.preventDefault();
     try {
-      await addOrder(values).unwrap();
-    } catch (error) {
-      setErrorMessage((error as any).data);
-    }
+      const submitResponse = await dispatch(createOrder(values)).unwrap();
+                    if(submitResponse.hasOwnProperty('success') && submitResponse.success == true ){
+                      Swal.fire({
+                        position: 'top-end',
+                        title: 'Order Successfully Created',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000
+                      })
+                      setTimeout(() => {
+                                          dispatch(fetchAllOrders()); 
+                                          reset();
+                                          setModalOpen(false);
+                                        }, 300);
+        
+                    }else{
+                      let errorResponses = [];
+                      for (const key in submitResponse.errors) {
+                        errorResponses.push(submitResponse.errors[key]); 
+                      }
+                      const display_err = errorResponses.map((error, index) => (
+                              <li className="p-1" key={index}>  {error}</li>
+                      ))
+                      setErrorMessage(display_err as any);
+                    }
+                  } catch (err) {
+                      console.log(err);
+                  }   
   };
 
   const handleCloseModal = () => {
@@ -187,9 +198,9 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
           <button
             type="submit"
             className="button mt-5 active:bg-gray-600 disabled:bg-gray-500 disabled:cursor-not-allowed"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting}
           >
-            Save
+            {isSubmitting ? "Saving..." : "Save"}
           </button>
         </form>
       </Modal>

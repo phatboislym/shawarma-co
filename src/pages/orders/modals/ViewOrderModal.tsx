@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Modal from '../../../components/Modal';
 import { IoClose } from "react-icons/io5";
 import {  useAppDispatch, useAppSelector} from '../../../state-control/store/hooks'
-import { fetchAllOrders, selectOrderRecord } from '../../../state-control/features/OrderSlice';
+import { fetchAllOrders, selectOrderRecord } from '../../../state-control/features/orderSlice';
 
 
 type ModalProps = {
