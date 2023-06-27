@@ -5,7 +5,7 @@ import DataTable from './DataTable';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useAppSelector } from '../../state-control/store/hooks';
-import { selectAllOrders } from '../../state-control/features/OrderSlice';
+import { selectAllOrders } from '../../state-control/features/orderSlice';
 
 
 const useStyles = makeStyles({
