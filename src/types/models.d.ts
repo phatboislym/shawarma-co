@@ -13,40 +13,20 @@ export interface SignUpType {
 
 export interface OrderType {
     [key: string]: any;
-    id: string;
-    name: string;
-    price: string;
-}
-
-export interface ShelfType {
-    [key: string]: any;
-    id: string;
-    title: string;
-    bookId: BookType;
-    userId: UserType;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string;
-}
-
-export interface CategoryType {
-    [key: string]: any;
-    id: string;
-    name: string;
-    description: string;
-}
-export interface BookToShelfType {
-    [key: string]: any;
-    bookId: string;
-    shelfId: string;
+    id_?: any;
+    // name: string;
+    quantity: string;
+    status: any;
+    // order_date: Date;
+    size: string;
+    spicyness: any;
 }
 
 export interface UserType {
     [key: string]: any;
     id: string
-    firstName: string
-    lastName: string
+    username: string
+    full_name: string
 }
 
 export interface PaginationProps {

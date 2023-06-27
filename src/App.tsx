@@ -7,12 +7,13 @@ import Header from "./layout/Header";
 import { PrivateRoute } from "./layout/PrivateRoute";
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000/';
+axios.defaults.baseURL = 'http://127.0.0.1:8080/';
 axios.defaults.withCredentials = true;
 
 const LandingPage = lazy(() => import("./pages/guest/LandingPage"));
 const Login = lazy(() => import("./pages/guest/Login"));
 const Register = lazy(() => import("./pages/guest/Register"));
+const Orders = lazy(() => import("./pages/orders/Orders"));
 const Dashboard = lazy(() => import("./pages/user/Dashboard"));
 
 export default function App() {
@@ -30,9 +31,9 @@ export default function App() {
             path="/dashboard"
             element={
               <PrivateRoute>
-                {" "}
-                <Dashboard />{" "}
-              </PrivateRoute>
+                 {" "}
+                <Dashboard /> {" "}
+               </PrivateRoute>
             }
           />
 

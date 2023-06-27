@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from '../features/authSlice'
+import orderReducer from '../features/OrderSlice'
 import { orderApi } from "../api/orderApi";
 import { userApi } from "../api/userApi";
 
@@ -9,8 +10,10 @@ import { userApi } from "../api/userApi";
 const reducers = combineReducers({
   // @todo
   auth: authReducer,
+  order: orderReducer,
   [orderApi.reducerPath]: orderApi.reducer,
   [userApi.reducerPath]: userApi.reducer
+
 });
 
 export const store = configureStore({

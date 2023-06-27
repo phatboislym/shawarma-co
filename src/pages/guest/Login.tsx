@@ -47,30 +47,29 @@ const Login = () => {
         e?.preventDefault();
         setIsProcessing(true)
         const { username, password } = values;
-        
+        const previousLocation = localStorage.getItem("previousLocation");
         try {
             
-          dispatch(login({ username, password })).then((resultAction) => {                
-            console.log(resultAction, "result")
-            if (login.fulfilled.match(resultAction)) {
-              if (resultAction.payload.status_code === 400){
-                setErrorMessage(resultAction.payload.detail)
-              }else {
-                Swal.fire({
-                  position: "top-end",
-                  title: "Login Successful",
-                  icon: "success",
-                  showConfirmButton: false,
-                  timer: 2000,
-                  });
-                setTimeout(() => {
-                  navigate("/dashboard");
-                }, 2000);            
-              }                                  
-            }
-          })
+          const loginResponse = await dispatch(login({ username, password })).unwrap();         
+           if(loginResponse){
+              const token = loginResponse.access;
+              localStorage.setItem('token', token)
+              Swal.fire({
+                position: "top-end",
+                title: "Login Successful",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+              });
+              setTimeout(() => {                  
+                navigate(previousLocation || "/dashboard");
+
+                // Clear the previous location from localStorage
+                localStorage.removeItem("previousLocation")
+              }, 2000);  
+           }
         } catch (error:any) {
-          console.log(error.message, 'error');          
+          setErrorMessage(error.message);          
         } finally{
             setIsProcessing(false)
         }
