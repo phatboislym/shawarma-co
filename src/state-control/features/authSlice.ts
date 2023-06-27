@@ -13,7 +13,7 @@ interface AuthState {
 const initialState: AuthState = {
     user: null,
     error: null,
-    isAuthenticated: localStorage.getItem('token') ? true : false,
+    isAuthenticated: false,
 };
 
 // export const login = createAsyncThunk('auth/login', async (credentials: { email: string, password: string }) => {
@@ -62,8 +62,11 @@ export const registerUser = createAsyncThunk('auth/register', async(values: any)
 
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-  const userLogout = await axios.post(`/auth/logout`);
-  return await userLogout.data; 
+  try {
+    await axios.post('/auth/logout');
+  } catch (error:any) {
+    throw new Error(error.message);
+  }
 });
 
 export const authSlice = createSlice({
@@ -98,8 +101,12 @@ export const authSlice = createSlice({
         .addCase(logout.fulfilled, (state) => {
           state.user = null;
           state.error = null;
-          state.isAuthenticated = false
-        });
+          state.isAuthenticated = false;
+        })
+        .addCase(logout.rejected, (state, action) => {
+          state.error = action.error.message || 'Logout failed';
+        })
+        
     },
 });
 

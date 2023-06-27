@@ -144,3 +144,20 @@ async def refresh(Authorize: AuthJWT = Depends()):
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='provide a valid refresh token')
+
+@auth_router.post("/auth/logout", status_code=status.HTTP_200_OK)
+async def logout(Authorize: AuthJWT = Depends()):
+    """
+    Logout endpoint
+
+    Args:
+        Authorize (AuthJWT, optional): AuthJWT instance. Defaults to Depends().
+
+    Returns:
+        dict: Logout success message
+    """
+    Authorize.jwt_required()  # Ensure the request includes a valid JWT token
+
+    Authorize.unset_jwt_cookies()  # Clear the JWT cookies from the response
+
+    return {'message': 'Logout successful'}

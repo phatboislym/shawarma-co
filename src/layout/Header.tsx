@@ -1,30 +1,32 @@
 import React, { Fragment, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../state-control/store/hooks';
-import { isAuthenticated } from '../state-control/features/authSlice';
+import { useAppDispatch, useAppSelector } from '../state-control/store/hooks';
+import { isAuthenticated, logout } from '../state-control/features/authSlice';
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   let activeUser = useAppSelector(isAuthenticated);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch()
+
+  console.log(activeUser)
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
   
-
   
-    const handleLogout = () => {
-      // Clear authentication-related data (e.g., remove token from local storage)
-      localStorage.removeItem('access_token');
-      
-      // Update application state (e.g., set isAuthenticated to false)
-      activeUser = false
-    
-      // Redirect to the login page or any other page
-      navigate('/');
-    };
-    
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+      // Clear any user-related data in the local storage
+      localStorage.removeItem('token');
+      // Perform any necessary cleanup or redirect
+      // ...
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
 
