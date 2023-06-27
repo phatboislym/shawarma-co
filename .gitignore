@@ -23,6 +23,9 @@ build/Release
 *.sql
 *.zip
 
+# ignore database files
+db.py
+
 # ignore dependency directories
 node_modules/
 jspm_packages/
