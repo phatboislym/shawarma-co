@@ -32,9 +32,10 @@ async def users(current_user_id: str = Depends(check_token)):
         List[User]: list of user details
     """
 
-    db_user: User = session.query(User).filter(
-        User.username == current_user_id).first()
-    if not db_user:
+    try:
+        db_user: User = session.query(User).filter(
+            User.username == current_user_id).first()
+    except Exception:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='user not found')
     if db_user.is_staff:
@@ -75,7 +76,8 @@ async def get_user(user_id: UUID,
     response: dict = {'id_': db_user.id_, 'email': db_user.email,
                       'is_active': db_user.is_active,
                       'is_staff': db_user.is_staff, 'name': db_user.name,
-                      'username': db_user.username}
+                      'username': db_user.username,
+                      'created_at': db_user.created_at}
     return jsonable_encoder(response)
 
 
@@ -143,6 +145,50 @@ async def get_order(order_id: UUID,
                             detail='order not found')
     if db_user.is_staff or db_user.id_ == db_order.user_id:
         return db_order
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='admin or user access required')
+
+
+@user_router.patch("/users/{user_id}/", status_code=status.HTTP_202_ACCEPTED)
+async def make_admin(user_id: UUID,
+                     current_user_id: str = Depends(check_token)):
+    """
+    add superuser permission to an account (admin access required)
+
+    args:
+
+        user_id (UUID): user ID
+
+        current_user_id: str (from AuthJWT instance)
+
+    Returns:
+
+        response: str, confirmation message
+    """
+
+    db_user: User = session.query(User).filter(
+        User.username == current_user_id).first()
+    try:
+        civilian: User = session.query(User).filter(
+            User.id_ == user_id).first()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='user not found')
+    if db_user.is_staff:
+        if civilian.is_staff == True:
+            response: str = f'user {civilian.username} is already a superuser'
+            return response
+        else:
+            civilian.is_staff = True
+            try:
+                session.commit()
+                response: str = f'user {civilian.username} is now a superuser'
+                return response
+            except Exception:
+                session.rollback()
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                    detail='failed to elevate user')
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='admin or user access required')
