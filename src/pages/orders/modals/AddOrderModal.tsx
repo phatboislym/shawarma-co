@@ -12,6 +12,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import 'react-datepicker/dist/react-datepicker.css';
 import { createOrder, fetchAllOrders } from '../../../state-control/features/orderSlice';
 import { useAppDispatch } from '../../../state-control/store/hooks';
+import { useAppSelector } from '../../../state-control/store/store';
+import { AuthUser } from '../../../state-control/features/authSlice';
 
 
 
@@ -35,12 +37,25 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
   } = useForm<OrderType>({
     resolver: yupResolver(addOrderSchema)
   });
+  const isAdmin = false
+  const user = useAppSelector(AuthUser)
+  console.log(user)
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
     }
   }, [isSubmitSuccessful, reset]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      dispatch(fetchAllOrders(null));
+    } else {
+      // Retrieve the userId for the current user from the auth state
+      const userId = user.id; // Replace with actual userId retrieval logic
+      dispatch(fetchAllOrders(userId));
+    }
+  }, [dispatch, isAdmin]);
 
   const onSubmitHandler: SubmitHandler<OrderType> = async (values, e) => {
     e?.preventDefault();
@@ -54,8 +69,7 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
                         showConfirmButton: false,
                         timer: 2000
                       })
-                      setTimeout(() => {
-                                          dispatch(fetchAllOrders()); 
+                      setTimeout(() => {                                          
                                           reset();
                                           setModalOpen(false);
                                           window.location.reload()

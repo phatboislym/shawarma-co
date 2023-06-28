@@ -3,7 +3,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mater
 import { OrderType } from '../../types/models';
 import EditOrderModal from '../orders/modals/EditOrderModal';
 import ViewOrderModal from '../orders/modals/ViewOrderModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { deleteOrder, fetchAllOrders, fetchOrderById } from '../../state-control/features/orderSlice';
 import { useAppDispatch } from '../../state-control/store/hooks';
@@ -30,12 +30,23 @@ const DataTable: React.FC<DataTableProps> = ({
   const [showEditOrderModal, setShowEditOrderModal] = useState(false);
   const [viewModalIsOpen, setViewModalOpen] = useState(false);
   const dispatch = useAppDispatch()
+  const isAdmin = false
 
   const handleEditModal = async (id: string, e:any) => {
     e.preventDefault
 		await dispatch(fetchOrderById(id)).unwrap();
 		setShowEditOrderModal((prevState) => !prevState);
 	};
+
+  useEffect(() => {
+    if (isAdmin) {
+      dispatch(fetchAllOrders(null));
+    } else {
+      // Retrieve the userId for the current user from the auth state
+      const userId = '123'; // Replace with actual userId retrieval logic
+      dispatch(fetchAllOrders(userId));
+    }
+  }, [dispatch, isAdmin]);
 
 	//handle delete
   const handleDelete =   (id:string, e:any) => {
@@ -51,8 +62,7 @@ const DataTable: React.FC<DataTableProps> = ({
         
         try {
           const submitResponse = await dispatch(deleteOrder(id)).unwrap();
-          if(submitResponse.hasOwnProperty('success') && submitResponse.success === true ){
-             dispatch(fetchAllOrders()); 
+          if(submitResponse.hasOwnProperty('success') && submitResponse.success === true ){           
             Swal.fire({
               position: 'top-end',
               title: 'Content Successfully Deleted',

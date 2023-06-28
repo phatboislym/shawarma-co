@@ -9,6 +9,7 @@ export interface SignUpType {
     password:string;
     name: string;
     username: string;
+    is_staff: boolean;
 }
 
 export interface OrderType {
