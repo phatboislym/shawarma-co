@@ -20,7 +20,7 @@ const addOrderSchema = yup.object().shape({
   quantity: yup.string().required('Required Field'),  
   spicyness: yup.string().required('Required Field'),
   size: yup.string().required('Required Field'),
-  status: yup.string().required('Required Field'),  
+  // status: yup.string().required('Required Field'),  
   // order_date: yup.date().required('Required Field'),  
 })
 
@@ -125,7 +125,7 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
               <p className="mb-3 text-red-500">{errors.quantity?.message}</p>
             </div>
 
-            <div className="w-full">
+            {/* <div className="w-full">
               <label
                 className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                 htmlFor="status"
@@ -143,7 +143,7 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
                 <option value="canceled">Canceled</option>
               </select>
               <p className="mb-3 text-red-500">{errors.status?.message  as any}</p>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex mb-3">

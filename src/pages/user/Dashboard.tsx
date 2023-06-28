@@ -6,6 +6,7 @@ import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useAppDispatch, useAppSelector } from '../../state-control/store/hooks';
 import { fetchAllOrders, selectAllOrders } from '../../state-control/features/orderSlice';
+import { selectUserRole, selectuserRecord } from '../../state-control/features/authSlice';
 
 
 const useStyles = makeStyles({
@@ -24,7 +25,9 @@ const Dashboard = () => {
   const [modalIsOpen, setModalOpen] = useState(false); 
   const classes = useStyles(); // Apply the custom styles
   const dispatch = useAppDispatch();
-
+  const userRole = useAppSelector(selectUserRole);
+  
+  console.log(userRole, "userRole") 
   console.log(orders, "orders")
   
 

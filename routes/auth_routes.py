@@ -114,7 +114,15 @@ async def login(user: Login, Authorize: AuthJWT = Depends()):
         refresh_token = Authorize.create_refresh_token(
             subject=db_user.username)
 
-        response = {'access': access_token, 'refresh': refresh_token}
+        response = {
+            'access': access_token,
+            'refresh': refresh_token,
+            'user': {
+                'username': db_user.username,
+                'is_staff': db_user.is_staff,
+                'id': db_user.id_
+            }
+        }
 
         return jsonable_encoder(response)
 

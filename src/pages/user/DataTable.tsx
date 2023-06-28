@@ -33,8 +33,8 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const handleEditModal = async (id: string, e:any) => {
     e.preventDefault
-		await dispatch(fetchOrderById(id)).unwrap();
 		setShowEditOrderModal((prevState) => !prevState);
+		await dispatch(fetchOrderById(id)).unwrap();
 	};
 
 	//handle delete
@@ -76,8 +76,8 @@ const DataTable: React.FC<DataTableProps> = ({
 }
   const handleViewModal = async (id: string, e:any) => {
     e.preventDefault();    
-		await dispatch(fetchOrderById(id)).unwrap();
 		setViewModalOpen((prevState) => !prevState);
+		await dispatch(fetchOrderById(id)).unwrap();
 	};
 
 
@@ -88,7 +88,7 @@ const DataTable: React.FC<DataTableProps> = ({
         <TableHead>
           <TableRow>
             <TableCell>S/N</TableCell>
-            <TableCell>ID</TableCell>
+            {/* <TableCell>ID</TableCell> */}
             <TableCell>Name</TableCell>
             <TableCell>Quantity</TableCell>
             <TableCell>Status</TableCell>
@@ -97,23 +97,23 @@ const DataTable: React.FC<DataTableProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
+          {orders.map((order, idx = 0) => (
             <TableRow key={order.id_}>
-              <TableCell>{}</TableCell>
-              <TableCell>{order.id_}</TableCell>
+              <TableCell>{idx + 1}</TableCell>
+              {/* <TableCell>{order.id_}</TableCell> */}
               <TableCell>{order.name}</TableCell>
               <TableCell>{order.quantity}</TableCell>
-              <TableCell>{order.status.value}</TableCell>
-              <TableCell>{order.spicyness.value}</TableCell>
+              <TableCell>{order.status && order.status.value}</TableCell>
+              <TableCell>{order.spicyness && order.spicyness.value}</TableCell>
               <TableCell>
                 <div className={classes.actions}>
-                  <Button variant="outlined" color="primary" onClick={(e) => handleViewModal(order.id, e)}>
+                  <Button variant="outlined" color="primary" onClick={(e) => handleViewModal(order.id_, e)}>
                     View
                   </Button>
-                  <Button variant="outlined" color="primary" onClick={(e) => handleEditModal(order.id, e)}>
+                  <Button variant="outlined" color="primary" onClick={(e) => handleEditModal(order.id_, e)}>
                     Edit
                   </Button>
-                  <Button variant="outlined" color="secondary" onClick={(e) => handleDelete(order.id, e)}>
+                  <Button variant="outlined" color="secondary" onClick={(e) => handleDelete(order.id_, e)}>
                     Delete
                   </Button>
                 </div>

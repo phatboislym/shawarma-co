@@ -16,7 +16,7 @@ export interface OrderType {
     id_?: any;
     // name: string;
     quantity: string;
-    status: any;
+    // status: any;
     // order_date: Date;
     size: string;
     spicyness: any;

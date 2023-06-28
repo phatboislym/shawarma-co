@@ -19,7 +19,7 @@ type ModalProps = {
 const addOrderSchema = yup.object().shape({
   name: yup.string().required('Required Field'),  
   quantity: yup.string().required('Required Field'),  
-  status: yup.string().required('Required Field'),  
+  // status: yup.string().required('Required Field'),  
   // order_date: yup.string().required('Required Field'),  
   size: yup.string().required('Required Field'),
   spicyness: yup.string().required('Required Field'),
@@ -34,13 +34,12 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
     id: orderRecord.id_ ? orderRecord.id_: "",
     // name: orderRecord.name ? orderRecord.name : "" , 
     quantity: orderRecord.quantity ? orderRecord.quantity : "" ,
-    status: orderRecord.status ? orderRecord.status.value : "" ,
+    // status: orderRecord.status ? orderRecord.status.value : "" ,
     // orderRecord_date: orderRecord.published_date ? new Date(orderRecord.published_date) : new Date(''),
     size: orderRecord.size ? orderRecord.size : "" , 
     spicyness: orderRecord.spicyness ? orderRecord.spicyness.value : ""
   } 
 
-  console.log(initialValues, "IV")
 
   const {
     register,
@@ -137,7 +136,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
                 <p className="mb-3">{errors.quantity?.message}</p>
               </div>
 
-              <div className="w-full">             
+              {/* <div className="w-full">             
                 <label
                   className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                   htmlFor="status"
@@ -152,7 +151,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
                 </select>
               
                 <p className="mb-3">{errors.status?.message as any}</p>
-              </div>
+              </div> */}
             </div>
 
             {/* date and CImage */}
