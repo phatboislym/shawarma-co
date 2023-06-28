@@ -1,11 +1,11 @@
 // import { Spinner } from '../../components/Spinner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddOrderModal from '../orders/modals/AddOrderModal';
 import DataTable from './DataTable';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useAppSelector } from '../../state-control/store/hooks';
-import { selectAllOrders } from '../../state-control/features/orderSlice';
+import { useAppDispatch, useAppSelector } from '../../state-control/store/hooks';
+import { fetchAllOrders, selectAllOrders } from '../../state-control/features/orderSlice';
 
 
 const useStyles = makeStyles({
@@ -23,8 +23,14 @@ const Dashboard = () => {
   const orders = useAppSelector(selectAllOrders);
   const [modalIsOpen, setModalOpen] = useState(false); 
   const classes = useStyles(); // Apply the custom styles
+  const dispatch = useAppDispatch();
 
+  console.log(orders, "orders")
   
+
+  useEffect(() => {
+    dispatch(fetchAllOrders())
+  }, [])
 
   const handleOpenAddModal = () => {
     setModalOpen(true);
