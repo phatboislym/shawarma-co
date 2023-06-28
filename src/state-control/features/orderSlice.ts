@@ -32,6 +32,7 @@ export const fetchAllOrders = createAsyncThunk(
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
         const response = await axios.get(`/orders`, {headers});
+        console.log(response, "fetch")
         return response.data;
       } catch (error: any) {
         console.log(error)
