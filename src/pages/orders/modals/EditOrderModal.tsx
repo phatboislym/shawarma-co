@@ -54,7 +54,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
   });
 
   const user = useAppSelector(AuthUser);
-  const isAdmin = user.is_staff;
+    const isAdmin = user.is_staff ?? false
 
 
 

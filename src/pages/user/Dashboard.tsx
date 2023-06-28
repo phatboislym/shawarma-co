@@ -26,7 +26,7 @@ const Dashboard = () => {
   const [modalIsOpen, setModalOpen] = useState(false); 
   const classes = useStyles(); // Apply the custom styles
   const user = useAppSelector(AuthUser)
-  const isAdmin = user.is_staff;
+  const isAdmin = user.is_staff ?? false
 
 
 

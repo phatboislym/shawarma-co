@@ -37,8 +37,8 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
   } = useForm<OrderType>({
     resolver: yupResolver(addOrderSchema)
   });
-  const isAdmin = false
   const user = useAppSelector(AuthUser)
+  const isAdmin = user.is_staff ?? false  
   console.log(user)
 
   useEffect(() => {

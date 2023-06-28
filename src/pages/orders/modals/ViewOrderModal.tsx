@@ -17,7 +17,7 @@ const ViewTicketModal = ({ viewModalIsOpen, setViewModalOpen }: ModalProps) => {
   const orderRecord = useAppSelector(selectOrderRecord);
   const user = useAppSelector(AuthUser)
   console.log(user)
-  const isAdmin = user.is_staff;
+    const isAdmin = user.is_staff ?? false
 
 
 
