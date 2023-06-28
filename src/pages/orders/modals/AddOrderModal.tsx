@@ -46,7 +46,7 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
     e?.preventDefault();
     try {
       const submitResponse = await dispatch(createOrder(values)).unwrap();
-                    if(submitResponse.hasOwnProperty('success') && submitResponse.success == true ){
+                    if(submitResponse){
                       Swal.fire({
                         position: 'top-end',
                         title: 'Order Successfully Created',
@@ -58,20 +58,14 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
                                           dispatch(fetchAllOrders()); 
                                           reset();
                                           setModalOpen(false);
+                                          window.location.reload()
                                         }, 300);
         
-                    }else{
-                      let errorResponses = [];
-                      for (const key in submitResponse.errors) {
-                        errorResponses.push(submitResponse.errors[key]); 
-                      }
-                      const display_err = errorResponses.map((error, index) => (
-                              <li className="p-1" key={index}>  {error}</li>
-                      ))
-                      setErrorMessage(display_err as any);
-                    }
-                  } catch (err) {
-                      console.log(err);
+                    
+                                      }
+                                    } catch (err:any) {
+                                      console.log(err);
+                                      setErrorMessage(err);
                   }   
   };
 

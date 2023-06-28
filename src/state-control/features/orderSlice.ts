@@ -48,7 +48,7 @@ export const createOrder = createAsyncThunk(
       try {
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
-        const response = await axios.post<OrderType>(`/orders`, order, {headers});
+        const response = await axios.post<OrderType>(`/orders/order`, order, {headers});
         return response.data;
       } catch (error:any) {
         return rejectWithValue(error.response.data);
@@ -117,14 +117,10 @@ const orderSlice = createSlice({
         .addCase(createOrder.pending, (state) => {
             state.status = "pending";            
         })
-        .addCase(createOrder.fulfilled, (state, action) => {
-            if(action.payload.hasOwnProperty('success') && action.payload.success === true  ){
+        .addCase(createOrder.fulfilled, (state, action) => {           
                 state.status = 'idle'; 
                 console.log(action);
-              }else {
-                state.status = 'failed';
-                console.log(action);
-            }
+              
         })
         .addCase(createOrder.rejected, (state) => {
             state.status = "failed";            
@@ -133,14 +129,9 @@ const orderSlice = createSlice({
           state.status = "pending";
         })
         .addCase(fetchOrderById.fulfilled, (state, action) => {
-            console.log(action.payload, "fetchbyId")
-            if(action.payload.hasOwnProperty('success') && action.payload.success === true  ){
-                state.status = 'idle';
-                state.orderRecord = action.payload.data;
-              }else {
-                state.status = 'failed';
-                state.orderRecord = orderRecord;
-            }
+            console.log(action.payload, "fetchbyId")            
+                state.status = 'success';
+                state.orderRecord = action.payload.data;              
         })
         .addCase(fetchOrderById.rejected, (state) => {
           state.status = "failed";
