@@ -17,6 +17,7 @@ Shawarma Co is a food delivery API with an optional frontend
 | *POST* | ```/auth/register/``` | *Register new user*| *All users*|
 | *POST* | ```/auth/login/``` | *Login user*|*All users*|
 | *GET* | ```/auth/refresh/``` | *Refresh access token*|*All users*|
+| *POST* | ```/auth/logout/``` | *Logout user*|*All users*|
 | *GET* | ```/orders/``` | *List all orders made*|*Superuser*|
 | *POST* | ```/orders/order``` | *Place an order*|*All users*|
 | *PUT* | ```/orders/{order_id}/update/``` | *Update an order*|*All users*|
