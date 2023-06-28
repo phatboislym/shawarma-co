@@ -9,7 +9,6 @@ export interface SignUpType {
     password:string;
     name: string;
     username: string;
-    is_staff: boolean;
 }
 
 export interface OrderType {
@@ -28,6 +27,7 @@ export interface UserType {
     id: string
     username: string
     full_name: string
+    is_staff: boolean;
 }
 
 export interface PaginationProps {

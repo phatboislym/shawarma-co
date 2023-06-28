@@ -49,6 +49,7 @@ export const createOrder = createAsyncThunk(
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
         const response = await axios.post<OrderType>(`/orders/order`, order, {headers});
+        console.log(response, "response")
         return response.data;
       } catch (error:any) {
         return rejectWithValue(error.response.data);
