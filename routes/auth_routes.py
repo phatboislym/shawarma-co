@@ -2,7 +2,7 @@
 module for auth routes
 """
 from datetime import datetime
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, responses, status
 from fastapi_another_jwt_auth import AuthJWT
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import HTTPException
@@ -24,8 +24,8 @@ def check_token(Authorize: AuthJWT = Depends()):
         current_user_id = Authorize.get_raw_jwt()['sub']
         return current_user_id
     except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail='invalid token')
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='invalid token')
 
 
 @auth_router.get("/auth")
@@ -84,7 +84,7 @@ async def register(user: SignUp):
     except Exception:
         session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail='failed to create order')
+                            detail='failed to create user')
 
     response: str = f'user {new_user.username} created'
     return response
@@ -145,19 +145,27 @@ async def refresh(Authorize: AuthJWT = Depends()):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='provide a valid refresh token')
 
+
 @auth_router.post("/auth/logout", status_code=status.HTTP_200_OK)
 async def logout(Authorize: AuthJWT = Depends()):
     """
-    Logout endpoint
+    logout endpoint
 
-    Args:
-        Authorize (AuthJWT, optional): AuthJWT instance. Defaults to Depends().
+    args:
+
+        Authorize (AuthJWT, optional): AuthJWT instance. Defaults to Depends()
 
     Returns:
+
         dict: Logout success message
     """
-    Authorize.jwt_required()  # Ensure the request includes a valid JWT token
-
-    Authorize.unset_jwt_cookies()  # Clear the JWT cookies from the response
-
-    return {'message': 'Logout successful'}
+    try:
+        Authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='invalid token')
+    try:
+        Authorize.unset_jwt_cookies()
+        return {'message': 'logout successful'}
+    except Exception:
+        return {'message': 'logout unsuccessful'}
