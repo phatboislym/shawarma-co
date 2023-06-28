@@ -1,12 +1,11 @@
 // import { Spinner } from '../../components/Spinner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AddOrderModal from '../orders/modals/AddOrderModal';
 import DataTable from './DataTable';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useAppDispatch, useAppSelector } from '../../state-control/store/hooks';
-import { fetchAllOrders, selectAllOrders } from '../../state-control/features/orderSlice';
-import { AuthUser } from '../../state-control/features/authSlice';
+import { useAppSelector } from '../../state-control/store/hooks';
+import { selectAllOrders } from '../../state-control/features/orderSlice';
 
 
 const useStyles = makeStyles({
@@ -21,24 +20,9 @@ const useStyles = makeStyles({
 
 
 const Dashboard = () => {
-  const dispatch = useAppDispatch();
   const orders = useAppSelector(selectAllOrders);
   const [modalIsOpen, setModalOpen] = useState(false); 
   const classes = useStyles(); // Apply the custom styles
-  const user = useAppSelector(AuthUser)
-  const isAdmin = user.is_staff ?? false
-
-
-
-  useEffect(() => {
-    if (isAdmin) {
-      dispatch(fetchAllOrders(null));
-    } else {
-      // Retrieve the userId for the current user from the auth state
-      const userId = user.id; // Replace with actual userId retrieval logic
-      dispatch(fetchAllOrders(userId));
-    }
-  }, [dispatch, isAdmin]);
 
   
 

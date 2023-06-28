@@ -9,7 +9,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { OrderType } from '../../../types/models';
 import { useAppSelector, useAppDispatch } from '../../../state-control/store/hooks';
 import { fetchAllOrders, selectOrderRecord, updateOrder } from '../../../state-control/features/orderSlice';
-import { AuthUser } from '../../../state-control/features/authSlice';
 
 
 type ModalProps = {
@@ -52,21 +51,6 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
     resolver: yupResolver(addOrderSchema),
     defaultValues: initialValues
   });
-
-  const user = useAppSelector(AuthUser);
-    const isAdmin = user.is_staff ?? false
-
-
-
-  useEffect(() => {
-    if (isAdmin) {
-      dispatch(fetchAllOrders(null));
-    } else {
-      // Retrieve the userId for the current user from the auth state
-      const userId = user.id; // Replace with actual userId retrieval logic
-      dispatch(fetchAllOrders(userId));
-    }
-  }, [dispatch, isAdmin]);
 
   const onSubmitHandler = async (values:any) => {
     try{

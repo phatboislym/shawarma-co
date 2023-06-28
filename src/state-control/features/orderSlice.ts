@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { OrderType } from "../../types/models";
 import axios from "axios";
-import { RootState, store } from "../store/store";
+import { RootState } from "../store/store";
 
 const BASE_URL = import.meta.env.VITE_API_SERVER_ENDPOINT as string;
 
@@ -25,41 +25,20 @@ const initialState = {
 };
 
 //fixed
-// export const fetchAllOrders = createAsyncThunk(
-//     "orders/index",
-//     async (_, { rejectWithValue }) => {
-//       try {
-//         const token = localStorage.getItem('token');
-//         const headers = {'Authorization': `Bearer ${token}`}
-//         const state = store.getState()
-//         const isAdmin = state.auth.user;
-//         const url = isAdmin ? '/orders' : `/users/${state.auth.user.id}/orders`;
-//         const response = await axios.get(`/orders`, {headers});
-//         return response.data;
-//       } catch (error: any) {
-//         console.log(error)
-//         return rejectWithValue(error.response.data);
-//       }
-//     }
-// );
 export const fetchAllOrders = createAsyncThunk(
     "orders/index",
-    async (userId: string | null, { rejectWithValue }) => {
-      const token = localStorage.getItem('token');
-      const headers = {'Authorization': `Bearer ${token}`}
+    async (_, { rejectWithValue }) => {
       try {
-        if (userId) {
-          const response = await axios.get(`/users/${userId}/orders`, {headers});
-          return response.data;
-        } else {
-          const response = await axios.get('/orders', {headers});
-          return response.data;
-        }
+        const token = localStorage.getItem('token');
+        const headers = {'Authorization': `Bearer ${token}`}
+        const response = await axios.get(`/orders`, {headers});
+        return response.data;
       } catch (error: any) {
-        return rejectWithValue(error.message);
+        console.log(error)
+        return rejectWithValue(error.response.data);
       }
-});
-
+    }
+);
 
 
 // fixed
@@ -138,10 +117,14 @@ const orderSlice = createSlice({
         .addCase(createOrder.pending, (state) => {
             state.status = "pending";            
         })
-        .addCase(createOrder.fulfilled, (state, action) => {           
+        .addCase(createOrder.fulfilled, (state, action) => {
+            if(action.payload.hasOwnProperty('success') && action.payload.success === true  ){
                 state.status = 'idle'; 
                 console.log(action);
-              
+              }else {
+                state.status = 'failed';
+                console.log(action);
+            }
         })
         .addCase(createOrder.rejected, (state) => {
             state.status = "failed";            

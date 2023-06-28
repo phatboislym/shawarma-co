@@ -3,7 +3,6 @@ import Modal from '../../../components/Modal';
 import { IoClose } from "react-icons/io5";
 import {  useAppDispatch, useAppSelector} from '../../../state-control/store/hooks'
 import { fetchAllOrders, selectOrderRecord } from '../../../state-control/features/orderSlice';
-import { AuthUser } from '../../../state-control/features/authSlice';
 
 
 type ModalProps = {
@@ -15,21 +14,12 @@ type ModalProps = {
 const ViewTicketModal = ({ viewModalIsOpen, setViewModalOpen }: ModalProps) => {
   const dispatch = useAppDispatch();
   const orderRecord = useAppSelector(selectOrderRecord);
-  const user = useAppSelector(AuthUser)
-  console.log(user)
-    const isAdmin = user.is_staff ?? false
+  
 
 
-
-  useEffect(() => {
-    if (isAdmin) {
-      dispatch(fetchAllOrders(null));
-    } else {
-      // Retrieve the userId for the current user from the auth state
-      const userId = user.id; // Replace with actual userId retrieval logic
-      dispatch(fetchAllOrders(userId));
-    }
-  }, [dispatch, isAdmin]);
+  useEffect( () => {
+      dispatch(fetchAllOrders());
+  }, [dispatch]);
 
   return (
     <Modal modalIsOpen={viewModalIsOpen} setModalOpen={setViewModalOpen}>
