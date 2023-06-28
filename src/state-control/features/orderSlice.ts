@@ -31,7 +31,7 @@ export const fetchAllOrders = createAsyncThunk(
       try {
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
-        const response = await axios.get(`${BASE_URL}/orders`, {headers});
+        const response = await axios.get(`/orders`, {headers});
         return response.data;
       } catch (error: any) {
         console.log(error)
@@ -48,7 +48,7 @@ export const createOrder = createAsyncThunk(
       try {
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
-        const response = await axios.post<OrderType>(`${BASE_URL}/orders`, order, {headers});
+        const response = await axios.post<OrderType>(`/orders`, order, {headers});
         return response.data;
       } catch (error:any) {
         return rejectWithValue(error.response.data);
