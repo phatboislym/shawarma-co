@@ -18,7 +18,7 @@ import { useAppDispatch } from '../../../state-control/store/hooks';
 const addOrderSchema = yup.object().shape({
   // name: yup.string().required('Required Field'),  
   quantity: yup.string().required('Required Field'),  
-  spicyness: yup.string().required('Required Field'),
+  spiciness: yup.string().required('Required Field'),
   size: yup.string().required('Required Field'),
   // status: yup.string().required('Required Field'),  
   // order_date: yup.date().required('Required Field'),  
@@ -174,7 +174,7 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
                 Spiciness
               </label>
               <select
-                {...register("spicyness")}
+                {...register("spiciness")}
                 className="input-field placeholder-blueGray-300"
               >
                 <option value="">Select Spiciness</option>

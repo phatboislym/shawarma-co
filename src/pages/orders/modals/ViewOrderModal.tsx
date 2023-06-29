@@ -36,7 +36,7 @@ const ViewTicketModal = ({ viewModalIsOpen, setViewModalOpen }: ModalProps) => {
                 <div className="col-span-4"> Size </div>
                 <div className="col-span-8"> { orderRecord.size ? orderRecord.size.value : "" } </div>
                 <div className="col-span-4"> Spiciness </div>
-                <div className="col-span-8"> { orderRecord.spicyness ? orderRecord.spicyness.value : "" } </div>
+                <div className="col-span-8"> { orderRecord.spiciness ? orderRecord.spiciness.value : "" } </div>
                 <div className="col-span-4"> Status </div>
                 <div className="col-span-8"> { orderRecord.status ? orderRecord.status.value : "" } </div>                 
             </div>

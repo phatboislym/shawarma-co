@@ -18,8 +18,8 @@ export interface OrderType {
     quantity: string;
     // status: any;
     // order_date: Date;
-    size: string;
-    spicyness: any;
+    size: any;
+    spiciness: any;
 }
 
 export interface UserType {

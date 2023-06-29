@@ -52,20 +52,20 @@ const DataTable: React.FC<DataTableProps> = ({
         try {
           const submitResponse = await dispatch(deleteOrder(id)).unwrap();
           if(submitResponse.hasOwnProperty('success') && submitResponse.success === true ){
-             dispatch(fetchAllOrders()); 
+            //  dispatch(fetchAllOrders()); 
             Swal.fire({
               position: 'top-end',
               title: 'Content Successfully Deleted',
               icon: 'success',
               showConfirmButton: false,
               timer: 1500
-            })                  
+            })
+               // dispatch(fetchAllOrders());                       
+            setTimeout(() => {
+              // dispatch(fetchAllOrders());                       
+              window.location.reload()
+            }, 300);
 
-          }else{
-            let errorResponses = [];
-            for (const key in submitResponse.errors) {
-              errorResponses.push(submitResponse.errors[key]); 
-            }
           }
         } catch (err) {
             console.log(err);
@@ -92,6 +92,7 @@ const DataTable: React.FC<DataTableProps> = ({
             <TableCell>Name</TableCell>
             <TableCell>Quantity</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Size</TableCell>
             <TableCell>Spicyness</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
@@ -104,7 +105,8 @@ const DataTable: React.FC<DataTableProps> = ({
               <TableCell>{order.name}</TableCell>
               <TableCell>{order.quantity}</TableCell>
               <TableCell>{order.status && order.status.value}</TableCell>
-              <TableCell>{order.spicyness && order.spicyness.value}</TableCell>
+              <TableCell>{order.size && order.size.value}</TableCell>
+              <TableCell>{order.spiciness && order.spiciness.value}</TableCell>
               <TableCell>
                 <div className={classes.actions}>
                   <Button variant="outlined" color="primary" onClick={(e) => handleViewModal(order.id_, e)}>

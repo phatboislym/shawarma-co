@@ -18,8 +18,8 @@ import {
 
 const reducers = combineReducers({
   // @todo
-  auth: authReducer,
   order: orderReducer,
+  auth: authReducer,
 });
 
 const persistConfig = {

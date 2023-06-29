@@ -53,7 +53,9 @@ const Login = () => {
           const loginResponse = await dispatch(login({ username, password })).unwrap();         
            if(loginResponse){
               const token = loginResponse.access;
+              const userId = loginResponse.user.id
               localStorage.setItem('token', token)
+              localStorage.setItem('userId', userId)
               Swal.fire({
                 position: "top-end",
                 title: "Login Successful",

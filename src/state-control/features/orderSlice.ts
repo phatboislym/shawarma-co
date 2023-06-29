@@ -15,7 +15,7 @@ export const orderRecord: OrderType = {
     status: "",
     // order_date: Date,
     size: "",
-    spicyness: "",
+    spiciness: "",
 }
 
 const initialState = {
@@ -90,6 +90,8 @@ export const fetchOrderById = createAsyncThunk(
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
         const response = await axios.get(`orders/${orderId}`, {headers});
+        console.log(response, "res")
+        localStorage.setItem("orderId", response.data.id_)
         return response.data;
       } catch (error: any) {
         return rejectWithValue(error.response.data);
@@ -103,9 +105,11 @@ export const updateOrder = createAsyncThunk(
     async (order: OrderType, { rejectWithValue }) => {
       try {
         const token = localStorage.getItem('token');
+        const orderId = localStorage.getItem('orderId');
+
         const headers = {'Authorization': `Bearer ${token}`}
-        const response = await axios.patch(
-          `/orders/order/update/${order.id_}/`,
+        const response = await axios.put(
+          `/orders/${orderId}/update`,
           order, {headers}
         );
         return response.data;
@@ -115,8 +119,10 @@ export const updateOrder = createAsyncThunk(
     }
 );
 
-export const deleteOrder = createAsyncThunk('faculty/delete', async (id: string) => {       
-  const deleteResponse = await axios.delete(`order/${id}`);
+export const deleteOrder = createAsyncThunk('faculty/delete', async (id: string) => {   
+  const token = localStorage.getItem('token');
+  const headers = {'Authorization': `Bearer ${token}`}
+  const deleteResponse = await axios.delete(`orders/${id}/delete`, {headers});
   return await deleteResponse.data;   
 })
 
