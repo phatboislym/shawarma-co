@@ -3,6 +3,7 @@ import { combineReducers } from "redux";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from '../features/authSlice'
 import orderReducer from '../features/orderSlice';
+import storage from 'redux-persist/lib/storage';
 import {
 	persistReducer,
 	FLUSH,
@@ -34,7 +35,11 @@ export const store = configureStore({
   //this is just a demo to remove the error
   reducer: persisted,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({}).concat([
+    getDefaultMiddleware({
+		serializableCheck: {
+			ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+		},
+	}).concat([
     ]),
   // devTools: process.env.NODE_ENV !== "production",
 });
