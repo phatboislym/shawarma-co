@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import 'react-datepicker/dist/react-datepicker.css';
 import { OrderType } from '../../../types/models';
 import { useAppSelector, useAppDispatch } from '../../../state-control/store/hooks';
-import { fetchAllOrders, selectOrderRecord, updateOrder } from '../../../state-control/features/orderSlice';
+import { fetchAllOrders, fetchOrderById, selectOrderRecord, updateOrder } from '../../../state-control/features/orderSlice';
 
 
 type ModalProps = {
@@ -29,6 +29,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
   const [errorMessage, setErrorMessage] = useState("");
   const orderRecord = useAppSelector(selectOrderRecord);
   const dispatch = useAppDispatch();
+  const orderId = orderRecord.id_ && orderRecord.id_
 
   let initialValues = {
     id: orderRecord.id_ ? orderRecord.id_: "",
@@ -36,17 +37,24 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
     quantity: orderRecord.quantity ? orderRecord.quantity : "" ,
     // status: orderRecord.status ? orderRecord.status.value : "" ,
     // orderRecord_date: orderRecord.published_date ? new Date(orderRecord.published_date) : new Date(''),
-    size: orderRecord.size ? orderRecord.size : "" , 
+    size: orderRecord.size ? orderRecord.size.value : "" , 
     spicyness: orderRecord.spicyness ? orderRecord.spicyness.value : ""
   } 
 
-  console.log(initialValues, "IV")
+
+  useEffect( () => {
+      dispatch(fetchOrderById(orderId));
+  }, [dispatch]);
+
+  console.log(initialValues, "iv")
+
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitSuccessful, errors, isSubmitting },    
     reset,
+    setValue
   } = useForm<OrderType>({
     resolver: yupResolver(addOrderSchema),
     defaultValues: initialValues
@@ -55,7 +63,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
   const onSubmitHandler = async (values:any) => {
     try{
       const submitResponse = await dispatch(updateOrder({...values, id_: initialValues.id})).unwrap();
-      if(submitResponse.hasOwnProperty('success') && submitResponse.success == true ){
+      if(submitResponse ){
         Swal.fire({
           position: 'top-end',
           title: 'Content Successfully Created',
@@ -93,7 +101,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
           <IoClose />
         </button>
       </div>
-      <div className="flex flex-col items-center px-4 md:px-5 mb-32 space-y-7">
+      <div className="flex flex-col items-center px-4 md:px-5 space-y-7">
         <h2 className="text-blue text-3xl">Update Customer Order</h2>
         {errorMessage && (
             <div className="animate__animated animate__shakeX bg-red-600 text-white  p-4 mb-2">
@@ -134,6 +142,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
                   {...register("quantity")}
                   placeholder="120"
                   className="input-field placeholder-blueGray-300"
+                  
                 />
                 <p className="mb-3">{errors.quantity?.message}</p>
               </div>
@@ -169,6 +178,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
               <select
                 {...register("size")}
                 className="input-field placeholder-blueGray-300"
+                value={initialValues.size.value}
               >
                 <option value="">Select Size</option>
                 <option value="small">Small</option>
@@ -176,7 +186,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
                 <option value="large">Large</option>
                 <option value="extra-large">Extra Large</option>
               </select>
-              <p className="mb-3 text-red-500">{errors.size?.message}</p>
+              {/* <p className="mb-3 text-red-500">{errors.size?.message}</p> */}
             </div>
 
               <div className="w-full mr-3">
@@ -189,6 +199,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
               <select
                 {...register("spicyness")}
                 className="input-field placeholder-blueGray-300"
+                value={initialValues.spicyness.value}
               >
                 <option value="">Select Spiciness</option>
                 <option value="no-spice">No Spice</option>

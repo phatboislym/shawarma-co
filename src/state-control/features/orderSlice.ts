@@ -105,7 +105,7 @@ export const updateOrder = createAsyncThunk(
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
         const response = await axios.patch(
-          `order/update/${order.id_}`,
+          `/orders/order/update/${order.id_}/`,
           order, {headers}
         );
         return response.data;
