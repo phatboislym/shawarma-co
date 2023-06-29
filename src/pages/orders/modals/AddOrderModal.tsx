@@ -55,7 +55,6 @@ const AddOrderModal = ({ modalIsOpen, setModalOpen }: ModalProps) => {
                         timer: 2000
                       })
                       setTimeout(() => {
-                                          dispatch(fetchAllOrders()); 
                                           reset();
                                           setModalOpen(false);
                                           window.location.reload()

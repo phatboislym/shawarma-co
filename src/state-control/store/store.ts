@@ -2,7 +2,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from '../features/authSlice'
-import orderReducer from '../features/orderSlice'
+import orderReducer from '../features/orderSlice';
+import {
+	persistReducer,
+	FLUSH,
+	REHYDRATE,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER,
+} from 'redux-persist';
+
 
 
 const reducers = combineReducers({
@@ -11,9 +21,18 @@ const reducers = combineReducers({
   order: orderReducer,
 });
 
+const persistConfig = {
+	key: 'root',
+	storage,
+	version: 1,
+	whitelist: ['user'],
+};
+
+const persisted = persistReducer(persistConfig, reducers);
+
 export const store = configureStore({
   //this is just a demo to remove the error
-  reducer: reducers,
+  reducer: persisted,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({}).concat([
     ]),

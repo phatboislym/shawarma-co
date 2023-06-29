@@ -17,7 +17,7 @@ type ModalProps = {
     id?: any;
 };
 const addOrderSchema = yup.object().shape({
-  name: yup.string().required('Required Field'),  
+  // name: yup.string().required('Required Field'),  
   quantity: yup.string().required('Required Field'),  
   // status: yup.string().required('Required Field'),  
   // order_date: yup.string().required('Required Field'),  
@@ -40,6 +40,7 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
     spicyness: orderRecord.spicyness ? orderRecord.spicyness.value : ""
   } 
 
+  console.log(initialValues, "IV")
 
   const {
     register,
@@ -63,8 +64,9 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
           timer: 2000
         })
         setTimeout(() => {
-          dispatch(fetchAllOrders());                       
+          // dispatch(fetchAllOrders());                       
           reset();
+          window.location.reload()
           setEditModalOpen(false);
         }, 300);
 
@@ -174,20 +176,25 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
               </div>
 
               <div className="w-full mr-3">
-                <label
-                  className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                  htmlFor="spicyness"
-                >
-                  Page Number
-                </label>
-                <input
-                  type="text"
-                  {...register("spicyness")}
-                  placeholder="120"
-                  className="input-field placeholder-blueGray-300"
-                />
-                <p className="mb-3">{errors.spicyness?.message as any}</p>
-              </div>
+              <label
+                className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                htmlFor="spiciness"
+              >
+                Spiciness
+              </label>
+              <select
+                {...register("spicyness")}
+                className="input-field placeholder-blueGray-300"
+              >
+                <option value="">Select Spiciness</option>
+                <option value="no-spice">No Spice</option>
+                <option value="mild">Mild</option>
+                <option value="medium">Medium</option>
+                <option value="spicy">Spicy</option>
+                <option value="extra-spicy">Extra Spicy</option>
+              </select>
+              <p className="mb-3 text-red-500">{errors.spicyness?.message as any}</p>
+            </div>
             </div>
             
             <button

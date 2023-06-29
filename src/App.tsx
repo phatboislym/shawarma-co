@@ -7,9 +7,7 @@ import Header from "./layout/Header";
 import { PrivateRoute } from "./layout/PrivateRoute";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_SERVER_ENDPOINT as string;
-
-axios.defaults.baseURL = `http://${BASE_URL}/`;
+axios.defaults.baseURL = 'http://127.0.0.1:8080/';
 axios.defaults.withCredentials = true;
 
 const LandingPage = lazy(() => import("./pages/guest/LandingPage"));
