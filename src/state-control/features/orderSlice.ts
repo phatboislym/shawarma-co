@@ -162,7 +162,7 @@ const orderSlice = createSlice({
         .addCase(fetchOrderById.fulfilled, (state, action) => {
             console.log(action.payload, "fetchbyId")            
                 state.status = 'success';
-                state.orderRecord = action.payload.data;              
+                state.orderRecord = action.payload;              
         })
         .addCase(fetchOrderById.rejected, (state) => {
           state.status = "failed";
