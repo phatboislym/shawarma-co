@@ -159,21 +159,25 @@ const EditOrderModal = ({ editModalIsOpen, setEditModalOpen, id }: ModalProps) =
             {/* date and CImage */}
             <div className="flex mb-3">
             
-              <div className="w-full mr-3">
-                <label
-                  className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                  htmlFor="size"
-                >
-                  Size
-                </label>
-                <input
-                  type="number"
-                  {...register("size")}
-                  placeholder="120"
-                  className="input-field placeholder-blueGray-300"
-                />
-                <p className="mb-3">{errors.size?.message}</p>
-              </div>
+            <div className="w-full mr-3">
+              <label
+                className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                htmlFor="size"
+              >
+                Size
+              </label>
+              <select
+                {...register("size")}
+                className="input-field placeholder-blueGray-300"
+              >
+                <option value="">Select Size</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+                <option value="extra-large">Extra Large</option>
+              </select>
+              <p className="mb-3 text-red-500">{errors.size?.message}</p>
+            </div>
 
               <div className="w-full mr-3">
               <label

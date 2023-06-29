@@ -89,7 +89,7 @@ export const fetchOrderById = createAsyncThunk(
       try {
         const token = localStorage.getItem('token');
         const headers = {'Authorization': `Bearer ${token}`}
-        const response = await axios.get(`order/${orderId}`, {headers});
+        const response = await axios.get(`orders/${orderId}`, {headers});
         return response.data;
       } catch (error: any) {
         return rejectWithValue(error.response.data);
