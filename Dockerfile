@@ -1,5 +1,5 @@
 # Base image
-FROM ubuntu:22.04
+FROM ubuntu:22.10
 
 # Install apt packages and update refs
 RUN apt-get update -y && apt-get upgrade -y 
