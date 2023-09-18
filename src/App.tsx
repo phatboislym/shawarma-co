@@ -7,7 +7,7 @@ import Header from "./layout/Header";
 import { PrivateRoute } from "./layout/PrivateRoute";
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://127.0.0.1:8080/';
+axios.defaults.baseURL = 'http://127.0.0.1:8000/';
 axios.defaults.withCredentials = true;
 
 const LandingPage = lazy(() => import("./pages/guest/LandingPage"));
@@ -30,9 +30,9 @@ export default function App() {
             path="/dashboard"
             element={
               <PrivateRoute>
-                 {" "}
+                {" "}
                 <Dashboard /> {" "}
-               </PrivateRoute>
+              </PrivateRoute>
             }
           />
 
